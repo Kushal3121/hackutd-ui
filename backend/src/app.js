@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
+import carRoutes from './routes/carRoutes.js';
 import { initUsers } from './models/userModel.js';
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(
 
 app.use(express.json());
 app.use('/', authRoutes);
+app.use('/api/cars', carRoutes);
 
 app.use((req, res) => res.status(404).json({ error: 'route not found' }));
 
