@@ -25,7 +25,7 @@ export default function Signup() {
       const res = await signupUser(form);
       if (res.user) {
         toast.success('Account created successfully!');
-        setTimeout(() => navigate('/login'), 2000); // redirect after 2s
+        setTimeout(() => navigate('/login'), 500); // redirect after 2s
       } else toast.error(res.error || 'Signup failed');
     } catch {
       toast.error('Server not reachable');

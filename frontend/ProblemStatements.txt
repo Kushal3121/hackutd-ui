@@ -1,0 +1,5 @@
+1. Toyota
+    - Toyota’s global vision is to lead the future of mobility, enriching lives around the world with the safest and most responsible ways of moving people.
+    - Toyota is the leader in making some of the best-selling, fuel-efficient, and top-quality automobiles in the world. 
+    - As part of the hackathon, develop a web or mobile solution that helps people easily shop for Toyota’s vehicles by searching, comparing, 
+      and finding their dream cars based on several personal preferences — including costs to finance and/or lease a vehicle.

@@ -4,11 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node src/server.js"
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
+    "fs-extra": "^11.3.2",
     "pg": "^8.12.0",
     "uuid": "^9.0.1"
   }
