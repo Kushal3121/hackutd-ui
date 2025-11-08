@@ -22,7 +22,7 @@ export default function Login() {
       if (res.user) {
         toast.success('Login successful!');
         localStorage.setItem('user', JSON.stringify(res.user));
-        navigate('/dashboard'); // redirect to home or dashboard
+        navigate('/dashboard');
       } else {
         toast.error(res.error || 'Invalid credentials');
       }
@@ -42,20 +42,20 @@ export default function Login() {
         transition={{ duration: 0.5 }}
         className='flex justify-center w-full'
       >
-        <div className='bg-white/80 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl px-10 py-12 w-full sm:max-w-lg md:max-w-xl'>
-          <h2 className='text-center text-4xl font-extrabold text-gray-900 mb-10'>
+        <div className='bg-white/90 backdrop-blur-xl border border-toyotaGray-mid shadow-2xl rounded-3xl px-10 py-12 w-full sm:max-w-lg md:max-w-xl'>
+          <h2 className='text-center text-4xl font-extrabold text-toyotaRed mb-10'>
             Welcome Back
           </h2>
 
           <form onSubmit={handleSubmit} className='space-y-6'>
             {/* Username */}
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>
+              <label className='block text-sm font-medium text-toyotaGray mb-1'>
                 Username
               </label>
               <div className='relative flex items-center'>
                 <AtSign
-                  className='absolute left-3 text-gray-400 pointer-events-none'
+                  className='absolute left-3 text-toyotaGray-mid pointer-events-none'
                   size={18}
                   style={{ top: '50%', transform: 'translateY(-50%)' }}
                 />
@@ -66,19 +66,19 @@ export default function Login() {
                   onChange={handleChange}
                   placeholder='Enter your username'
                   required
-                  className='w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white/60 placeholder-gray-400'
+                  className='w-full pl-10 pr-3 py-3 border border-toyotaGray-mid rounded-lg focus:ring-2 focus:ring-toyotaRed focus:border-toyotaRed outline-none bg-white/80 placeholder-gray-400'
                 />
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>
+              <label className='block text-sm font-medium text-toyotaGray mb-1'>
                 Password
               </label>
               <div className='relative flex items-center'>
                 <Lock
-                  className='absolute left-3 text-gray-400 pointer-events-none'
+                  className='absolute left-3 text-toyotaGray-mid pointer-events-none'
                   size={18}
                   style={{ top: '50%', transform: 'translateY(-50%)' }}
                 />
@@ -89,7 +89,7 @@ export default function Login() {
                   onChange={handleChange}
                   placeholder='••••••••'
                   required
-                  className='w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white/60 placeholder-gray-400'
+                  className='w-full pl-10 pr-3 py-3 border border-toyotaGray-mid rounded-lg focus:ring-2 focus:ring-toyotaRed focus:border-toyotaRed outline-none bg-white/80 placeholder-gray-400'
                 />
               </div>
             </div>
@@ -98,13 +98,13 @@ export default function Login() {
             <div className='flex justify-between text-sm'>
               <Link
                 to='/forgot-password'
-                className='text-indigo-600 hover:underline font-medium'
+                className='text-toyotaRed hover:underline font-medium'
               >
                 Forgot password?
               </Link>
               <Link
                 to='/signup'
-                className='text-gray-600 hover:text-indigo-600 font-medium transition'
+                className='text-toyotaGray hover:text-toyotaRed font-medium transition'
               >
                 Create account
               </Link>
@@ -116,7 +116,7 @@ export default function Login() {
               whileTap={{ scale: 0.97 }}
               type='submit'
               disabled={loading}
-              className='w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 transition'
+              className='w-full py-3 bg-toyotaRed text-white font-semibold rounded-lg shadow-md hover:bg-toyotaRed-dark focus:ring-4 focus:ring-toyotaRed/40 transition'
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </motion.button>

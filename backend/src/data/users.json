@@ -5,5 +5,12 @@
     "name": "admin",
     "passwordHash": "$2a$10$OqMOPladTU7cG1cIWF0Ho.KigDJy.mYV4ApT4L8eRty1jVpVSjDJ6",
     "createdAt": 1762638068629
+  },
+  {
+    "id": "8c844a85-bfad-476f-947b-db53148def0b",
+    "username": "admin1",
+    "name": "admin",
+    "passwordHash": "$2a$10$MXtJDmpI1qm6y.L6BWCNiOvJBPGfTk6VmvH7/pk3av8ASoFosZlcW",
+    "createdAt": 1762638540955
   }
 ]

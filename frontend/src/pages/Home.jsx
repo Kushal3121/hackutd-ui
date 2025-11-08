@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 
 export default function Home() {
   return (
-    <div className='min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex flex-col'>
+    <div className='min-h-screen bg-gradient-to-b from-white via-toyotaGray-light to-[#F3F3F3] flex flex-col'>
       <Navbar />
 
       {/* Hero Section */}
-      <section className='flex flex-col items-center justify-center flex-1 px-6 text-center text-white'>
+      <section className='flex flex-col items-center justify-center flex-1 px-6 text-center text-toyotaGray'>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -16,24 +16,26 @@ export default function Home() {
           className='max-w-3xl'
         >
           <h1 className='text-5xl sm:text-6xl font-extrabold mb-6 leading-tight'>
-            Build, Innovate, and Create with{' '}
-            <span className='text-yellow-300'>HackUTD</span>
+            Discover the Future of{' '}
+            <span className='text-toyotaRed'>Toyota Mobility</span>
           </h1>
-          <p className='text-lg sm:text-xl text-white/90 mb-10'>
-            Join the next generation of innovators. Collaborate, code, and bring
-            your ideas to life.
+
+          <p className='text-lg sm:text-xl text-toyotaGray mb-10'>
+            Explore, compare, and find your dream Toyota — powered by
+            innovation, designed for every lifestyle.
           </p>
 
           <div className='flex flex-col sm:flex-row justify-center gap-4'>
             <Link
               to='/signup'
-              className='px-8 py-3 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow-md hover:bg-yellow-300 transition'
+              className='px-8 py-3 bg-toyotaRed text-white font-semibold rounded-lg shadow-md hover:bg-toyotaRed-dark transition'
             >
               Get Started
             </Link>
+
             <Link
               to='/login'
-              className='px-8 py-3 bg-white/20 border border-white text-white font-semibold rounded-lg shadow-md hover:bg-white/30 transition'
+              className='px-8 py-3 border-2 border-toyotaRed text-toyotaRed font-semibold rounded-lg hover:bg-toyotaRed hover:text-white transition'
             >
               Sign In
             </Link>
@@ -42,8 +44,9 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className='text-center text-white/70 py-6 text-sm border-t border-white/30'>
-        © {new Date().getFullYear()} HackUTD — All Rights Reserved.
+      <footer className='text-center text-toyotaGray py-6 text-sm border-t border-toyotaGray-mid'>
+        © {new Date().getFullYear()} Toyota Mobility Challenge — All Rights
+        Reserved.
       </footer>
     </div>
   );
