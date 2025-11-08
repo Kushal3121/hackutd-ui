@@ -7,12 +7,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: '#4F46E5',
-          light: '#6366F1',
-          dark: '#4338CA',
+        // Toyota color palette
+        toyotaRed: {
+          DEFAULT: '#EB0A1E', // main red (logo)
+          dark: '#C70015', // for hover states or emphasis
+          light: '#FF4C4C', // optional accent tone
         },
-        accent: '#F59E0B',
+        toyotaGray: {
+          DEFAULT: '#1A1A1A', // text / dark bg
+          light: '#F7F7F7', // section bg
+          mid: '#D1D5DB', // border / subtle divider
+        },
+        white: '#FFFFFF',
+        black: '#000000',
+      },
+      fontFamily: {
+        sans: ['Montserrat', 'Roboto', 'sans-serif'], // Toyota-like font style
       },
     },
   },
