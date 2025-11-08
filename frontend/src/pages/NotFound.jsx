@@ -58,7 +58,7 @@ export default function NotFound() {
         transition={{ delay: 1.2 }}
         className='absolute bottom-6 text-white/70 text-sm'
       >
-        © {new Date().getFullYear()} HackUTD — Innovate Fearlessly.
+        © {new Date().getFullYear()} HackUTD — All Rights Reserved.
       </motion.p>
     </div>
   );

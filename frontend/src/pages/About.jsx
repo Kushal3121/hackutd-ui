@@ -34,7 +34,7 @@ export default function About() {
         </div>
       </motion.div>
       <footer className='text-center text-white/70 py-6 text-sm border-t border-white/30'>
-        © {new Date().getFullYear()} HackUTD Project — All rights reserved.
+        © {new Date().getFullYear()} HackUTD — All Rights Reserved.
       </footer>
     </div>
   );

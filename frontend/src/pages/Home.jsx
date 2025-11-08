@@ -43,7 +43,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className='text-center text-white/70 py-6 text-sm border-t border-white/30'>
-        © {new Date().getFullYear()} HackUTD UI — All Rights Reserved.
+        © {new Date().getFullYear()} HackUTD — All Rights Reserved.
       </footer>
     </div>
   );
