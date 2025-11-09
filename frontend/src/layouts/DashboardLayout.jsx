@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/TopBar';
+import CompareFab from '../components/CompareFab';
+import { Toaster } from 'react-hot-toast';
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
@@ -20,6 +22,7 @@ export default function DashboardLayout() {
 
   return (
     <div className='flex h-screen bg-toyotaGray-light font-sans'>
+      <Toaster />
       <Sidebar onLogout={handleLogout} />
       <div className='flex-1 flex flex-col'>
         <Topbar user={user} />
@@ -27,6 +30,7 @@ export default function DashboardLayout() {
           <Outlet />
         </main>
       </div>
+      <CompareFab />
     </div>
   );
 }

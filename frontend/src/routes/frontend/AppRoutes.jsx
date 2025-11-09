@@ -7,6 +7,7 @@ import About from '../../pages/About';
 import Home from '../../pages/Home';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import Dashboard from '../../pages/Dashboard';
+import Compare from '../../pages/Compare';
 import CarDetails from '../../pages/CarDetails';
 
 const router = createBrowserRouter([
@@ -30,9 +31,7 @@ const router = createBrowserRouter([
 
       {
         path: 'compare',
-        element: (
-          <div className='p-6 text-gray-600'>Compare Page (coming soon)</div>
-        ),
+        element: <Compare />,
       },
       {
         path: 'profile',

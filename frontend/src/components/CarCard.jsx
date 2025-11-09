@@ -1,8 +1,12 @@
-import { MapPin, Fuel } from 'lucide-react';
+import { MapPin, Fuel, Scale } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useCompareStore } from '../store/compareStore';
 
 export default function CarCard({ car }) {
   const navigate = useNavigate();
+  const items = useCompareStore((s) => s.items);
+  const toggle = useCompareStore((s) => s.toggle);
+  const inCompare = items.some((c) => c.id === car.id);
 
   return (
     <div
@@ -33,7 +37,7 @@ export default function CarCard({ car }) {
           {car.name}
         </h2>
 
-        <p className='text-sm text-toyotaGray-mid'>
+        <p className='text-sm text-toyotaGray'>
           {car.trim} • {car.powertrain} • {car.drivetrain}
         </p>
 
@@ -41,7 +45,7 @@ export default function CarCard({ car }) {
           {car.currency} {car.msrp.toLocaleString()}
         </p>
 
-        <div className='flex items-center justify-between text-xs text-toyotaGray-mid mt-3'>
+        <div className='flex items-center justify-between text-xs text-toyotaGray mt-3'>
           <span className='flex items-center gap-1'>
             <MapPin size={14} /> {car.inventory.location}
           </span>
@@ -50,14 +54,30 @@ export default function CarCard({ car }) {
             {car.efficiency.hwy_mpg} mpg
           </span>
         </div>
+
+        {/* Add to Compare */}
+        <button
+          onClick={() => toggle(car)}
+          className={`mt-3 inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-semibold border transition
+            ${
+              inCompare
+                ? 'bg-toyotaRed text-white border-toyotaRed'
+                : 'border-gray-300 text-toyotaGray hover:border-toyotaRed'
+            }
+          `}
+        >
+          <Scale size={16} />
+          {inCompare ? 'Remove from Compare' : 'Add to Compare'}
+        </button>
       </div>
 
-      {/* --- Hover Action Layer --- */}
+      {/* --- Hover Action Layer (restricted to image area to avoid hiding details) --- */}
       <div
         className='
-          absolute inset-0 flex flex-col items-center justify-center text-center
+          absolute top-0 left-0 right-0 h-44
+          flex flex-col items-center justify-center text-center
           opacity-0 group-hover:opacity-100 transition-opacity duration-300
-          bg-white/10 backdrop-blur-md
+          bg-black/25
         '
       >
         <p className='text-white font-medium text-sm mb-3 drop-shadow'>
