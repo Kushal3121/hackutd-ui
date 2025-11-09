@@ -1,19 +1,5 @@
 [
   {
-    "id": "TD-1",
-    "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-1",
-    "carName": "Toyota Corolla",
-    "color": "Midnight Black Metallic",
-    "packages": [
-      "Convenience Package"
-    ],
-    "totalPrice": 24341,
-    "status": "booked",
-    "etaDays": 3,
-    "bookedAt": "2025-11-09T02:55:40.111Z"
-  },
-  {
     "id": "TD-2",
     "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
     "carId": "CAR-1",
@@ -31,134 +17,25 @@
   {
     "id": "TD-3",
     "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-1",
+    "carId": "CAR-5",
     "carName": "Toyota Corolla",
-    "color": "Ice Cap",
-    "packages": [
-      "Weather Package",
-      "Convenience Package"
-    ],
-    "totalPrice": 25291,
+    "color": null,
+    "packages": [],
+    "totalPrice": 24556,
     "status": "booked",
     "etaDays": 5,
-    "bookedAt": "2025-11-09T02:59:53.099Z"
+    "bookedAt": "2025-11-09T04:51:18.621Z"
   },
   {
     "id": "TD-4",
     "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-1",
-    "carName": "Toyota Corolla",
-    "color": "Wind Chill Pearl",
-    "packages": [
-      "Convenience Package"
-    ],
-    "totalPrice": 24766,
-    "status": "booked",
-    "etaDays": 6,
-    "bookedAt": "2025-11-09T03:04:49.976Z"
-  },
-  {
-    "id": "TD-5",
-    "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-1",
-    "carName": "Toyota Corolla",
-    "color": "Wind Chill Pearl",
-    "packages": [
-      "Convenience Package"
-    ],
-    "totalPrice": 24766,
-    "status": "booked",
-    "etaDays": 3,
-    "bookedAt": "2025-11-09T03:06:56.041Z"
-  },
-  {
-    "id": "TD-6",
-    "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-1",
-    "carName": "Toyota Corolla",
-    "color": "Midnight Black Metallic",
-    "packages": [
-      "Convenience Package"
-    ],
-    "totalPrice": 24341,
-    "status": "booked",
-    "etaDays": 7,
-    "bookedAt": "2025-11-09T03:07:43.813Z"
-  },
-  {
-    "id": "TD-7",
-    "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-1",
-    "carName": "Toyota Corolla",
-    "color": "Supersonic Red",
-    "packages": [
-      "Convenience Package"
-    ],
-    "totalPrice": 24341,
-    "status": "booked",
-    "etaDays": 7,
-    "bookedAt": "2025-11-09T03:08:20.885Z"
-  },
-  {
-    "id": "TD-8",
-    "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-1",
-    "carName": "Toyota Corolla",
-    "color": "Ice Cap",
-    "packages": [
-      "Convenience Package"
-    ],
-    "totalPrice": 24341,
-    "status": "booked",
-    "etaDays": 6,
-    "bookedAt": "2025-11-09T03:17:41.783Z"
-  },
-  {
-    "id": "TD-9",
-    "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-10",
+    "carId": "CAR-5",
     "carName": "Toyota Corolla",
     "color": null,
     "packages": [],
-    "totalPrice": 30388,
-    "status": "booked",
-    "etaDays": 5,
-    "bookedAt": "2025-11-09T03:25:15.557Z"
-  },
-  {
-    "id": "TD-10",
-    "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-10",
-    "carName": "Toyota Corolla",
-    "color": null,
-    "packages": [],
-    "totalPrice": 30388,
-    "status": "booked",
-    "etaDays": 5,
-    "bookedAt": "2025-11-09T03:25:16.283Z"
-  },
-  {
-    "id": "TD-11",
-    "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-15",
-    "carName": "Toyota Corolla",
-    "color": null,
-    "packages": [],
-    "totalPrice": 21903,
+    "totalPrice": 24556,
     "status": "booked",
     "etaDays": 4,
-    "bookedAt": "2025-11-09T03:28:46.372Z"
-  },
-  {
-    "id": "TD-12",
-    "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
-    "carId": "CAR-21",
-    "carName": "Toyota Camry",
-    "color": null,
-    "packages": [],
-    "totalPrice": 34742,
-    "status": "booked",
-    "etaDays": 6,
-    "bookedAt": "2025-11-09T03:28:47.698Z"
+    "bookedAt": "2025-11-09T04:51:44.022Z"
   }
 ]

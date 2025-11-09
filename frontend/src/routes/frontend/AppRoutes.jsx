@@ -8,6 +8,7 @@ import Home from '../../pages/Home';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import Dashboard from '../../pages/Dashboard';
 import Compare from '../../pages/Compare';
+import TestDrives from '../../pages/TestDrives';
 import CarDetails from '../../pages/CarDetails';
 
 const router = createBrowserRouter([
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: 'compare',
         element: <Compare />,
+      },
+      {
+        path: 'testdrives',
+        element: <TestDrives />,
       },
       {
         path: 'profile',

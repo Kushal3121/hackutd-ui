@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import Select from 'react-select';
-import { getCars } from '../services/api';
+import { getCars, bookTestDrive } from '../services/api';
 import { useCompareStore } from '../store/compareStore';
 import toast from 'react-hot-toast';
 import CarSelect from '../components/CarSelect';
@@ -249,11 +249,31 @@ export default function Compare() {
                   <td key={car.id} className='p-4 text-center'>
                     <div className='flex flex-col items-center gap-2'>
                       <button
-                        onClick={() =>
-                          toast.success(
-                            `Booked test drive for ${car.name} ${car.trim}`
-                          )
-                        }
+                        onClick={async () => {
+                          try {
+                            const user = JSON.parse(
+                              localStorage.getItem('user') || '{}'
+                            );
+                            const payload = {
+                              userId: user?.id || user?.username || 'guest',
+                              carId: car.id,
+                              carName: car.name,
+                              color: null,
+                              packages: [],
+                              totalPrice: car.msrp,
+                            };
+                            const res = await bookTestDrive(payload);
+                            if (res?.id) {
+                              toast.success(
+                                `Booked test drive for ${car.name}`
+                              );
+                            } else {
+                              toast.error(res?.error || 'Booking failed');
+                            }
+                          } catch {
+                            toast.error('Server not reachable');
+                          }
+                        }}
                         className='w-40 px-5 py-2 border border-red-400 bg-[#EB0A1E] text-white font-semibold rounded-md shadow-sm hover:bg-[#c10000] transition-all'
                       >
                         Book Test Drive

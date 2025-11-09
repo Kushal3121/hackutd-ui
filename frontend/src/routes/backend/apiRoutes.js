@@ -17,4 +17,5 @@ export const API_ROUTES = {
   // --- Test drive routes ---
   TESTDRIVE: `${BASE_URL}/api/testdrive`,
   TESTDRIVE_USER: (userId) => `${BASE_URL}/api/testdrive/${userId}`,
+  TESTDRIVE_DELETE: (id) => `${BASE_URL}/api/testdrive/${id}`,
 };

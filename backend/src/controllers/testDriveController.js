@@ -1,6 +1,8 @@
 import {
   addTestDrive,
+  getAllTestDrives,
   getTestDrivesByUser,
+  deleteTestDrive as deleteById,
 } from '../models/testDriveModel.js';
 
 const randomEta = () => 3 + Math.floor(Math.random() * 5); // 3-7
@@ -41,6 +43,32 @@ export const getUserTestDrives = async (req, res) => {
     res.json(list);
   } catch (e) {
     res.status(500).json({ error: 'Failed to fetch test drives' });
+  }
+};
+
+export const getAllTestDrivesController = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (userId) {
+      const list = await getTestDrivesByUser(userId);
+      return res.json(list);
+    }
+    const list = await getAllTestDrives();
+    res.json(list);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to fetch test drives' });
+  }
+};
+
+export const deleteTestDrive = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: 'id required' });
+    const ok = await deleteById(id);
+    if (!ok) return res.status(404).json({ error: 'not found' });
+    res.json({ message: 'deleted' });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to delete test drive' });
   }
 };
 

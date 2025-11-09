@@ -73,6 +73,17 @@ export const getUserTestDrives = async (userId) => {
   return data;
 };
 
+export const getAllTestDrives = async (userId) => {
+  const { data } = await api.get(API_ROUTES.TESTDRIVE, {
+    params: userId ? { userId } : undefined,
+  });
+  return data;
+};
+
+export const deleteTestDrive = async (id) => {
+  const { data } = await api.delete(API_ROUTES.TESTDRIVE_DELETE(id));
+  return data;
+};
 // --- Configurator helper APIs (API-first with graceful fallbacks) ---
 export const getPackages = async (carId) => {
   const { data } = await api.get(`${API_ROUTES.CAR_DETAIL(carId)}/packages`);

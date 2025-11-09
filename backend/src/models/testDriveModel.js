@@ -55,4 +55,16 @@ export async function getTestDrivesByUser(userId) {
   return testDrives.filter((t) => t.userId === userId);
 }
 
+export async function getAllTestDrives() {
+  return testDrives;
+}
+
+export async function deleteTestDrive(id) {
+  const idx = testDrives.findIndex((t) => t.id === id);
+  if (idx === -1) return false;
+  testDrives.splice(idx, 1);
+  await saveTestDrives();
+  return true;
+}
+
 
