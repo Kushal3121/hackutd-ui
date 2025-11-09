@@ -247,8 +247,8 @@ export default function Dashboard() {
   return (
     <div className='p-6'>
       {/* Filters Header */}
-      <div className='mb-4 flex items-center justify-between'>
-        <div className='flex items-center gap-3'>
+      <div className='mb-4 flex items-center justify-between gap-4'>
+        <div className='flex items-center gap-3 flex-shrink-0'>
           <button
             onClick={() => setDrawerOpen(true)}
             className='px-4 py-2 rounded-md border border-gray-300 font-semibold hover:border-[#EB0A1E] hover:text-[#EB0A1E] transition'
@@ -259,7 +259,17 @@ export default function Dashboard() {
             {filtered.length} match{filtered.length !== 1 ? 'es' : ''}
           </div>
         </div>
-        <div>
+        {/* Inline search */}
+        <div className='flex-1'>
+          <input
+            type='text'
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder='Search cars...'
+            className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EB0A1E]'
+          />
+        </div>
+        <div className='flex-shrink-0'>
           <Select
             options={[
               { value: 'none', label: 'Sort: Default' },
