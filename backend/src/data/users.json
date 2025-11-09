@@ -19,5 +19,12 @@
     "name": "Kushal",
     "passwordHash": "$2a$10$Ky3/sNwTm.AwY0WAcrnuIupVc9F43yCYJnb9jnspuiiwYe9WmF7Te",
     "createdAt": 1762646530436
+  },
+  {
+    "id": "a11d9ea9-0431-46f7-82d6-b08a341227ec",
+    "username": "kushal21",
+    "name": "Kushal",
+    "passwordHash": "$2a$10$7v6lfanwKKfVb23XqKqbveCG0Vv2Kf4IR2ha4b2yKrcv4P9IWNvqm",
+    "createdAt": 1762708506713
   }
 ]
