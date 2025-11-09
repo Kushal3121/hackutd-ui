@@ -4,6 +4,7 @@ import Select from 'react-select';
 import { getCars } from '../services/api';
 import { useCompareStore } from '../store/compareStore';
 import toast from 'react-hot-toast';
+import CarSelect from '../components/CarSelect';
 
 export default function Compare() {
   const selected = useCompareStore((s) => s.items);
@@ -48,11 +49,6 @@ export default function Compare() {
     return arr;
   }, [selectedCars, sortKey]);
 
-  const availableCars = useMemo(() => {
-    const selectedIds = new Set(selected.map((s) => s.id));
-    return cars.filter((c) => !selectedIds.has(c.id));
-  }, [cars, selected]);
-
   if (loading) return <p className='p-6 text-center text-gray-600'>Loading…</p>;
 
   const features = [
@@ -94,21 +90,27 @@ export default function Compare() {
   ];
 
   const getHighlight = (feature, car, values) => {
+    // Lowest price = green
     if (feature.key === 'msrp') {
       const min = Math.min(...values);
-      return car.msrp === min ? 'text-[#EB0A1E] font-semibold' : '';
+      return car.msrp === min ? 'text-green-600 font-semibold' : '';
     }
+
+    // Highest efficiency = green
     if (feature.key === 'efficiency') {
       const mpg = car.efficiency.city_mpg + car.efficiency.hwy_mpg;
       const max = Math.max(...values);
-      return mpg === max ? 'text-[#EB0A1E] font-semibold' : '';
+      return mpg === max ? 'text-green-600 font-semibold' : '';
     }
+
+    // Highest stock = green (best availability)
     if (feature.label === 'In Stock') {
       const max = Math.max(...values);
       return car.inventory.inStock === max
-        ? 'text-[#EB0A1E] font-semibold'
+        ? 'text-green-600 font-semibold'
         : '';
     }
+
     return '';
   };
 
@@ -121,33 +123,14 @@ export default function Compare() {
         </h2>
 
         <div className='flex flex-wrap items-center gap-4'>
-          <Select
-            options={availableCars.map((c) => ({
-              value: c.id,
-              label: `${c.name} ${c.trim} (${c.year})`,
-            }))}
-            placeholder='Add car to compare...'
-            onChange={(opt) => {
-              const car = cars.find((c) => c.id === opt.value);
+          {/* CHANGED: Pass ALL cars instead of availableCars */}
+          <CarSelect
+            cars={cars}
+            selectedCars={selectedCars}
+            onSelect={(car) => toggle(car)}
+            onRemove={(id) => {
+              const car = selectedCars.find((c) => c.id === id);
               if (car) toggle(car);
-            }}
-            isDisabled={selectedCars.length >= 3}
-            isSearchable={false}
-            menuShouldScrollIntoView={false}
-            styles={{
-              control: (base) => ({
-                ...base,
-                borderRadius: '0.5rem',
-                borderColor: '#d1d5db',
-                boxShadow: 'none',
-                width: '260px',
-                '&:hover': { borderColor: '#EB0A1E' },
-              }),
-              option: (base, { isFocused }) => ({
-                ...base,
-                backgroundColor: isFocused ? '#FEE2E2' : 'white',
-                color: '#111',
-              }),
             }}
           />
           <Select
@@ -206,7 +189,7 @@ export default function Compare() {
                       <img
                         src={car.media.hero}
                         alt={car.name}
-                        className='w-56 h-36 object-cover rounded-lg mb-3 shadow-sm'
+                        className='w-full max-w-[350px] h-30 object-cover object-center rounded-lg mb-3 shadow-md hover:scale-105 transition-transform duration-300'
                       />
                       <div className='font-semibold text-gray-900 text-base mb-1'>
                         {car.name} {car.trim}
@@ -271,7 +254,7 @@ export default function Compare() {
                             `Booked test drive for ${car.name} ${car.trim}`
                           )
                         }
-                        className='px-5 py-2 bg-[#EB0A1E] text-white font-semibold rounded-md shadow-sm hover:bg-[#c10000] transition-all'
+                        className='w-40 px-5 py-2 border border-red-400 bg-[#EB0A1E] text-white font-semibold rounded-md shadow-sm hover:bg-[#c10000] transition-all'
                       >
                         Book Test Drive
                       </button>
@@ -279,7 +262,7 @@ export default function Compare() {
                         onClick={() =>
                           toast.success(`${car.name} added to cart`)
                         }
-                        className='px-5 py-2 border border-gray-400 text-gray-800 font-semibold rounded-md hover:border-[#EB0A1E] hover:text-[#EB0A1E] transition-all'
+                        className='w-40 px-5 py-2 border border-gray-400 text-gray-800 font-semibold rounded-md hover:border-[#EB0A1E] hover:text-[#EB0A1E] transition-all'
                       >
                         Add to Cart
                       </button>
