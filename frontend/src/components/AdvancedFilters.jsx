@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Select from 'react-select';
 import { SlidersHorizontal, Gauge, Fuel } from 'lucide-react';
 import { Range } from 'react-range';
+import SmartSearchInput from './SmartSearchInput';
 
 export default function AdvancedFilters(props) {
   const {
@@ -10,6 +11,8 @@ export default function AdvancedFilters(props) {
     matchCount,
     visibleCount,
     clearFilters,
+    onParsedCommand,
+    lastParsed,
     allSeries,
     allRegions,
     years,
@@ -119,6 +122,31 @@ export default function AdvancedFilters(props) {
 
             {/* Body */}
             <div className='p-4 space-y-4 overflow-y-auto flex-1 bg-gray-50/40'>
+              {/* Smart NL Search at top */}
+              <div className='bg-white rounded-md p-3 shadow-sm border border-gray-100'>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Smart Search
+                </label>
+                <SmartSearchInput onParsed={onParsedCommand} />
+                {/* {lastParsed && (
+                  <div className='mt-2 text-xs text-gray-600'>
+                    Parsed: {lastParsed.action}
+                    {lastParsed.filters && (
+                      <>
+                        {' '}
+                        •{' '}
+                        {Object.entries(lastParsed.filters)
+                          .map(
+                            ([k, v]) =>
+                              `${k}: ${Array.isArray(v) ? v.join(', ') : v}`
+                          )
+                          .join(' • ')}
+                      </>
+                    )}
+                  </div>
+                )} */}
+              </div>
+
               <CardSection label='Sort'>
                 <Select
                   options={[

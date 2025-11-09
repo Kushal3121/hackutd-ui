@@ -109,7 +109,7 @@ export default function CarDetails() {
             <img
               src={car.media?.hero}
               alt={car.name}
-              className='w-full h-80 object-cover'
+              className='w-full h-[26rem] md:h-[30rem] object-cover'
             />
             <div
               className='absolute inset-0 rounded-2xl'

@@ -129,6 +129,7 @@ export default function Dashboard() {
   const [pkg, setPkg] = useState([]);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortKey, setSortKey] = useState('none');
+  const [lastParsed, setLastParsed] = useState(null);
 
   // initialize ranges after cars load
   useEffect(() => {
@@ -160,6 +161,46 @@ export default function Dashboard() {
     setInStockOnly(false);
     setSortKey('none');
     setVisibleCount(24);
+  };
+
+  // ---------- Apply parsed command from SmartSearchInput ----------
+  const applyParsedFilters = (result) => {
+    if (!result || typeof result !== 'object') return;
+    setLastParsed(result);
+    const { action, filters = {} } = result;
+    // Always reset count
+    setVisibleCount(24);
+    // If "compare", for now we do not navigate; we surface parsed info only.
+    // We still apply reasonable search defaults if models present.
+    if (
+      action === 'compare' &&
+      Array.isArray(filters.models) &&
+      filters.models.length
+    ) {
+      setQuery(filters.models.join(' '));
+    } else if (filters.model) {
+      setQuery(String(filters.model));
+    }
+    if (typeof filters.maxPrice === 'number' && Number.isFinite(minMsrp)) {
+      const hi = Math.max(minMsrp, filters.maxPrice);
+      setMsrpRange([minMsrp, hi]);
+      setSortKey('price_asc');
+    }
+    if (filters.region) {
+      setRegion(filters.region);
+    }
+    if (filters.bodyType) {
+      setSeries([filters.bodyType]);
+    }
+    if (filters.powertrain) {
+      setPowertrains([filters.powertrain]);
+    }
+    if (filters.drivetrain) {
+      setDrivetrains([filters.drivetrain]);
+    }
+    if (typeof filters.year === 'number') {
+      setYearsSelected([filters.year]);
+    }
   };
 
   // ---------- Filtering ----------
@@ -304,6 +345,8 @@ export default function Dashboard() {
       <AdvancedFilters
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
+        onParsedCommand={applyParsedFilters}
+        lastParsed={lastParsed}
         matchCount={filtered.length}
         visibleCount={Math.min(visibleCount, filtered.length)}
         clearFilters={clearFilters}
