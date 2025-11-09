@@ -129,8 +129,7 @@ export default function Home() {
       <motion.section
         className='px-6 pt-10 pb-16 bg-white relative overflow-hidden'
         initial='hidden'
-        whileInView='visible'
-        viewport={{ once: true, margin: '-100px' }}
+        animate='visible'
       >
         <div className='max-w-6xl mx-auto'>
           <motion.div
@@ -165,8 +164,7 @@ export default function Home() {
       <motion.section
         className='py-20 px-6 bg-white'
         initial='hidden'
-        whileInView='visible'
-        viewport={{ once: true, margin: '-100px' }}
+        animate='visible'
       >
         <div className='max-w-6xl mx-auto'>
           <motion.div variants={fadeInUp} className='text-center mb-16'>
@@ -250,8 +248,7 @@ export default function Home() {
       <motion.section
         className='py-20 px-6 bg-white'
         initial='hidden'
-        whileInView='visible'
-        viewport={{ once: true, margin: '-100px' }}
+        animate='visible'
       >
         <div className='max-w-6xl mx-auto'>
           <motion.div variants={fadeInUp} className='text-center mb-16'>
@@ -329,8 +326,7 @@ export default function Home() {
       <motion.section
         className='py-20 px-6 bg-gray-50 relative overflow-hidden'
         initial='hidden'
-        whileInView='visible'
-        viewport={{ once: true, margin: '-100px' }}
+        animate='visible'
       >
         {/* Background Accent */}
         <motion.div
@@ -456,8 +452,7 @@ export default function Home() {
       <motion.section
         className='py-20 px-6 bg-gradient-to-br from-[#eb0a1e] to-[#d1091b] text-white relative overflow-hidden'
         initial='hidden'
-        whileInView='visible'
-        viewport={{ once: true }}
+        animate='visible'
       >
         {/* Animated Background Elements */}
         <motion.div
