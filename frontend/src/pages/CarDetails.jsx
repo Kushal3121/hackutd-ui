@@ -3,6 +3,13 @@ import { useEffect, useState, useRef } from 'react';
 import { getCars } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
+import PackageSelector from '../components/PackageSelector';
+import FinanceSelector from '../components/FinanceSelector';
+import AccessorySelector from '../components/Accessoryselector';
+import InteriorSelector from '../components/InteriorSelector';
+import DrivetrainSelector from '../components/DrivetrainSelector';
+import SummarySection from '../components/SummarySection';
+import InsuranceSelector from '../components/Insuranceselector';
 
 export default function CarDetails() {
   const { id } = useParams();
@@ -11,7 +18,17 @@ export default function CarDetails() {
   const [selectedColor, setSelectedColor] = useState(null);
   const [accentColor, setAccentColor] = useState('#EB0A1E');
   const [loading, setLoading] = useState(true);
-  const nextSectionRef = useRef(null);
+  const [step, setStep] = useState(1);
+
+  const refs = {
+    package: useRef(null),
+    drivetrain: useRef(null),
+    interior: useRef(null),
+    accessory: useRef(null),
+    insurance: useRef(null),
+    finance: useRef(null),
+    summary: useRef(null),
+  };
 
   useEffect(() => {
     getCars().then((all) => {
@@ -30,14 +47,17 @@ export default function CarDetails() {
     '089W': '#F5F5F5',
   };
 
+  // ✅ Fixed: correctly scrolls to the next section
   const handleColorSelect = (color) => {
     setSelectedColor(color);
     const shade = colorMap[color.code] || '#EB0A1E';
     setAccentColor(shade);
-    setTimeout(
-      () => nextSectionRef.current?.scrollIntoView({ behavior: 'smooth' }),
-      700
-    );
+
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        refs.package.current?.scrollIntoView({ behavior: 'smooth' });
+      });
+    }, 700);
   };
 
   if (loading || !car)
@@ -50,7 +70,7 @@ export default function CarDetails() {
       className='min-h-screen transition-all duration-1000'
       style={{
         background: selectedColor
-          ? `linear-gradient(90deg, ${accentColor}15 0%, #fff 30%, #fff 70%, ${accentColor}15 100%)`
+          ? `linear-gradient(to bottom, ${accentColor}25 0%, #ffffff 60%, ${accentColor}10 100%)`
           : '#fff',
       }}
     >
@@ -78,7 +98,6 @@ export default function CarDetails() {
               alt={car.name}
               className='w-full h-80 object-cover'
             />
-            {/* Subtle overlay tint */}
             <div
               className='absolute inset-0 rounded-2xl'
               style={{
@@ -96,7 +115,7 @@ export default function CarDetails() {
         </motion.div>
       </section>
 
-      {/* --- Color Step --- */}
+      {/* --- Step 1: Color Selection --- */}
       <section className='max-w-5xl mx-auto px-6 mb-20'>
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
@@ -107,7 +126,6 @@ export default function CarDetails() {
           Choose Your Color
         </motion.h2>
 
-        {/* Color Pills */}
         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 justify-items-center'>
           {car.colors.map((color, index) => {
             const isSelected = selectedColor?.code === color.code;
@@ -121,13 +139,11 @@ export default function CarDetails() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`w-full max-w-[200px] h-28 flex flex-col justify-center items-center gap-2 rounded-xl border-2 transition-all duration-300
-                  ${
-                    isSelected
-                      ? 'border-[var(--accent)] bg-[var(--accent)]/10 shadow-[0_0_10px_var(--accent)]'
-                      : 'border-gray-300 hover:border-[var(--accent)]'
-                  }
-                `}
+                className={`w-full max-w-[200px] h-28 flex flex-col justify-center items-center gap-2 rounded-xl border-2 transition-all duration-300 ${
+                  isSelected
+                    ? 'border-[var(--accent)] bg-[var(--accent)]/10 shadow-[0_0_10px_var(--accent)]'
+                    : 'border-gray-300 hover:border-[var(--accent)]'
+                }`}
                 style={{ '--accent': accentColor }}
               >
                 <div
@@ -154,7 +170,6 @@ export default function CarDetails() {
           })}
         </div>
 
-        {/* Feedback */}
         <AnimatePresence>
           {selectedColor && (
             <motion.div
@@ -183,21 +198,132 @@ export default function CarDetails() {
         </AnimatePresence>
       </section>
 
-      {/* --- Next Section Placeholder --- */}
-      <section ref={nextSectionRef} className='max-w-5xl mx-auto px-6 pb-20'>
-        <motion.h2
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className='text-3xl font-semibold mb-4 text-toyotaGray'
-        >
-          Optional Packages (Coming next)
-        </motion.h2>
-        <p className='text-toyotaGray-mid text-lg'>
-          Once color is selected, the accent theme will match it — and we’ll
-          display package options below dynamically.
-        </p>
-      </section>
+      {/* --- Step 2: Packages --- */}
+      {selectedColor && (
+        <div ref={refs.package}>
+          <PackageSelector
+            car={car}
+            accentColor={accentColor}
+            visible={step >= 1}
+            onComplete={() => {
+              setStep(2);
+              setTimeout(() => {
+                requestAnimationFrame(() => {
+                  refs.drivetrain.current?.scrollIntoView({
+                    behavior: 'smooth',
+                  });
+                });
+              }, 700);
+            }}
+          />
+        </div>
+      )}
+
+      {/* --- Step 3: Drivetrain --- */}
+      {step >= 2 && (
+        <div ref={refs.drivetrain}>
+          <DrivetrainSelector
+            car={car}
+            accentColor={accentColor}
+            visible={step >= 2}
+            onSelect={() => {
+              setStep(3);
+              setTimeout(() => {
+                requestAnimationFrame(() => {
+                  refs.interior.current?.scrollIntoView({ behavior: 'smooth' });
+                });
+              }, 700);
+            }}
+          />
+        </div>
+      )}
+
+      {/* --- Step 4: Interior --- */}
+      {step >= 3 && (
+        <div ref={refs.interior}>
+          <InteriorSelector
+            accentColor={accentColor}
+            visible={step >= 3}
+            onSelect={() => {
+              setStep(4);
+              setTimeout(() => {
+                requestAnimationFrame(() => {
+                  refs.accessory.current?.scrollIntoView({
+                    behavior: 'smooth',
+                  });
+                });
+              }, 700);
+            }}
+          />
+        </div>
+      )}
+
+      {/* --- Step 5: Accessories --- */}
+      {step >= 4 && (
+        <div ref={refs.accessory}>
+          <AccessorySelector
+            accentColor={accentColor}
+            visible={step >= 4}
+            onSelect={() => {
+              setStep(5);
+              setTimeout(() => {
+                requestAnimationFrame(() => {
+                  refs.insurance.current?.scrollIntoView({
+                    behavior: 'smooth',
+                  });
+                });
+              }, 700);
+            }}
+          />
+        </div>
+      )}
+
+      {/* --- Step 6: Insurance --- */}
+      {step >= 5 && (
+        <div ref={refs.insurance}>
+          <InsuranceSelector
+            accentColor={accentColor}
+            visible={step >= 5}
+            onSelect={() => {
+              setStep(6);
+              setTimeout(() => {
+                requestAnimationFrame(() => {
+                  refs.finance.current?.scrollIntoView({ behavior: 'smooth' });
+                });
+              }, 700);
+            }}
+          />
+        </div>
+      )}
+
+      {/* --- Step 7: Finance --- */}
+      {step >= 6 && (
+        <div ref={refs.finance}>
+          <FinanceSelector
+            accentColor={accentColor}
+            visible={step >= 6}
+            onComplete={() => {
+              setStep(7);
+              setTimeout(() => {
+                requestAnimationFrame(() => {
+                  refs.summary.current?.scrollIntoView({ behavior: 'smooth' });
+                });
+              }, 700);
+            }}
+          />
+        </div>
+      )}
+
+      {/* --- Step 8: Summary --- */}
+      {step >= 7 && (
+        <div ref={refs.summary}>
+          <SummarySection
+            car={car}
+            accentColor={accentColor}
+            selectedColor={selectedColor}
+          />
+        </div>
+      )}
     </div>
   );
 }
