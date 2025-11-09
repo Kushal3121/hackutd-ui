@@ -7,7 +7,7 @@ Modern car shopping dashboard with a React/Vite frontend and a Node.js/Express b
 - Browse and filter cars by body type, powertrain, region, year, and budget
 - Compare models and view a concise heuristic summary
 - Save favorites to “My Garage”, book test drives, and explore lease options
-- Chat assistant powered entirely by local NLP heuristics (no external AI)
+- Chat assistant powered entirely by local NLP heuristics
 
 ## Tech Stack
 
