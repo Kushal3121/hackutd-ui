@@ -3,6 +3,7 @@ import Select from 'react-select';
 import { getCars } from '../services/api';
 import CarCard from '../components/CarCard';
 import AdvancedFilters from '../components/AdvancedFilters';
+import ChatBot from '../components/ChatBot';
 
 export default function Dashboard() {
   const [cars, setCars] = useState([]);
@@ -434,6 +435,8 @@ export default function Dashboard() {
           </button>
         </div>
       )}
+      {/* Floating local AI Assistant */}
+      <ChatBot cars={cars} />
     </div>
   );
 }
