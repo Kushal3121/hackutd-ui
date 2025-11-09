@@ -5,6 +5,8 @@ import NotFound from '../../pages/NotFound';
 import Signup from '../../pages/Auth/SignUp';
 import About from '../../pages/About';
 import Home from '../../pages/Home';
+import DashboardLayout from '../../layouts/DashboardLayout';
+import Dashboard from '../../pages/Dashboard';
 
 const router = createBrowserRouter([
   { path: '/', element: <Home /> },
@@ -12,6 +14,25 @@ const router = createBrowserRouter([
   { path: '/signup', element: <Signup /> },
   { path: '/forgot-password', element: <ForgotPassword /> },
   { path: '/about', element: <About /> },
+  {
+    path: '/dashboard',
+    element: <DashboardLayout />,
+    children: [
+      { index: true, element: <Dashboard /> },
+      {
+        path: 'compare',
+        element: (
+          <div className='p-6 text-gray-600'>Compare Page (coming soon)</div>
+        ),
+      },
+      {
+        path: 'profile',
+        element: (
+          <div className='p-6 text-gray-600'>Profile Page (coming soon)</div>
+        ),
+      },
+    ],
+  },
   { path: '*', element: <NotFound /> },
 ]);
 

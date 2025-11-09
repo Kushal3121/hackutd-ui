@@ -45,4 +45,21 @@ export const getUserDetail = async (username) => {
   return data;
 };
 
+// --- Car APIs ---
+export const getCars = async () => {
+  const { data } = await api.get(API_ROUTES.CARS);
+  return data;
+};
+
+export const getCarById = async (id) => {
+  const { data } = await api.get(API_ROUTES.CAR_DETAIL(id));
+  return data;
+};
+
+// pass e.g. { region: 'US', year: 2024 }
+export const filterCars = async (params = {}) => {
+  const { data } = await api.get(API_ROUTES.CAR_FILTER, { params });
+  return data;
+};
+
 export default api;
