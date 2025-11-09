@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { MessageSquare, Send, X } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import { handleAction, applyFilters } from '../utils/chatActions';
+import { summarizeComparison } from '../utils/summarizer';
 import CarCard from './CarCard';
 import { useGarageStore } from '../store/garageStore';
 
@@ -69,6 +70,87 @@ export default function ChatBot({ cars = [] }) {
                   type: 'cars',
                   message: `Found ${results.length} match(es). Showing top results:`,
                   cars: results.slice(0, 3),
+                },
+              },
+            ]);
+          }
+        }, 350);
+      } else if (reply?.type === 'compare') {
+        // Show comparing… then summarization + show cars
+        setMessages((m) => [
+          ...m,
+          {
+            role: 'assistant',
+            content: { type: 'text', message: reply.message || 'Comparing…' },
+          },
+        ]);
+        setTimeout(async () => {
+          const [carA, carB] = reply.cars || [];
+          if (!carA || !carB) return;
+          const summary = await summarizeComparison(carA, carB);
+          setMessages((m) => [
+            ...m,
+            { role: 'assistant', content: { type: 'text', message: summary } },
+            {
+              role: 'assistant',
+              content: {
+                type: 'cars',
+                message: 'Here are the two models:',
+                cars: [carA, carB],
+              },
+            },
+          ]);
+        }, 350);
+      } else if (reply?.type === 'chat') {
+        // General OpenAI chat via backend with graceful fallback
+        setMessages((m) => [
+          ...m,
+          {
+            role: 'assistant',
+            content: { type: 'text', message: reply.message },
+          },
+        ]);
+        setTimeout(async () => {
+          try {
+            const res = await fetch('http://localhost:3000/api/chat', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+              },
+              body: JSON.stringify({ message: reply.prompt || text }),
+            });
+            const data = await res.json();
+            if (data?.text) {
+              setMessages((m) => [
+                ...m,
+                {
+                  role: 'assistant',
+                  content: { type: 'text', message: data.text },
+                },
+              ]);
+            } else {
+              setMessages((m) => [
+                ...m,
+                {
+                  role: 'assistant',
+                  content: {
+                    type: 'text',
+                    message:
+                      'I’m here to help with search, compare and recommendations. Try asking for "hybrid suv under 30k".',
+                  },
+                },
+              ]);
+            }
+          } catch {
+            setMessages((m) => [
+              ...m,
+              {
+                role: 'assistant',
+                content: {
+                  type: 'text',
+                  message:
+                    'I could not reach the assistant service right now. Please try again.',
                 },
               },
             ]);
@@ -176,14 +258,14 @@ export default function ChatBot({ cars = [] }) {
                     type='text'
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder='Ask me e.g. "compare camry and corolla"'
+                    placeholder='Type your message...'
                     className='flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EB0A1E]'
                   />
                   <button
                     type='submit'
                     className='inline-flex items-center gap-1 px-3 py-2 bg-[#EB0A1E] text-white rounded-md hover:bg-red-600 transition'
                   >
-                    <Send size={16} /> Send
+                    Send
                   </button>
                 </div>
               </form>

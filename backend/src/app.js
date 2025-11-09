@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import authRoutes from './routes/authRoutes.js';
 import carRoutes from './routes/carRoutes.js';
 import testDriveRoutes from './routes/testDriveRoutes.js';
@@ -9,10 +11,14 @@ import { initUsers } from './models/userModel.js';
 import { initTestDrives } from './models/testDriveModel.js';
 import { initLeases } from './controllers/leaseController.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
+import aiRoutes from './routes/aiRoutes.js';
 
 const app = express();
 
-dotenv.config();
+// Load .env from backend root regardless of cwd
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 app.use(
   cors({
@@ -27,6 +33,7 @@ app.use('/', authRoutes);
 app.use('/api/cars', authMiddleware, carRoutes);
 app.use('/api/testdrive', authMiddleware, testDriveRoutes);
 app.use('/api/lease', authMiddleware, leaseRoutes);
+app.use('/api', aiRoutes);
 
 app.use((req, res) => res.status(404).json({ error: 'route not found' }));
 
