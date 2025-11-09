@@ -25,13 +25,6 @@ Modern car shopping dashboard with a React/Vite frontend and a Node.js/Express b
 - Node.js 18+ (recommend latest LTS)
 - npm 9+ or pnpm/yarn (commands below use npm)
 
-## Environment
-
-Backend reads `.env` from `backend/.env` for standard variables like `PORT` (optional).
-
-- Default backend: `http://localhost:3000`
-- Default frontend: `http://localhost:5173`
-
 ## Install & Run
 
 Backend (API)
