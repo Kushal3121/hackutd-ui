@@ -78,68 +78,94 @@ export default function SummarySection({
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className='bg-white shadow-[0_4px_25px_rgba(0,0,0,0.05)] rounded-2xl px-10 py-8 border border-gray-100 text-left space-y-5'
+        className='bg-white shadow-[0_4px_25px_rgba(0,0,0,0.05)] rounded-2xl px-8 py-8 border border-gray-100 text-left'
         style={{ '--accent': accentColor }}
       >
-        <div className='space-y-3 text-lg text-gray-700 leading-relaxed'>
-          <p>
-            <strong className='text-gray-900'>Model:</strong> {car.name}{' '}
-            {car.trim} ({car.year})
-          </p>
-          <p>
-            <strong className='text-gray-900'>Color:</strong>{' '}
-            {selectedColor?.name}{' '}
-            {colorExtra > 0
-              ? `(+${car.currency} ${colorExtra.toLocaleString()})`
-              : ''}
-          </p>
-          <p>
-            <strong className='text-gray-900'>Packages:</strong>{' '}
-            {selectedPackages.length > 0
-              ? selectedPackages
-                  .map(
-                    (p) =>
-                      `${p.name} (+${car.currency} ${p.price.toLocaleString()})`
-                  )
-                  .join(', ')
-              : 'None'}
-          </p>
-        </div>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
+          {/* Left: Build details */}
+          <div className='space-y-6'>
+            <div>
+              <div className='text-sm text-gray-500 mb-1'>Model</div>
+              <div className='text-lg font-semibold text-gray-900'>
+                {car.name} {car.trim} ({car.year})
+              </div>
+            </div>
+            <div className='grid grid-cols-2 gap-x-8 gap-y-3 text-[15px] text-gray-700'>
+              <div className='text-gray-500'>Powertrain</div>
+              <div className='font-medium'>{car.powertrain}</div>
+              <div className='text-gray-500'>Drivetrain</div>
+              <div className='font-medium'>{car.drivetrain}</div>
+              <div className='text-gray-500'>Efficiency</div>
+              <div className='font-medium'>
+                {car.efficiency?.city_mpg} city / {car.efficiency?.hwy_mpg} hwy
+              </div>
+              <div className='text-gray-500'>Location</div>
+              <div className='font-medium'>{car.inventory?.location}</div>
+              <div className='text-gray-500'>In Stock</div>
+              <div className='font-medium'>{car.inventory?.inStock}</div>
+              <div className='text-gray-500'>ETA</div>
+              <div className='font-medium'>
+                {car.inventory?.deliveryEtaDays} days
+              </div>
+            </div>
+          </div>
 
-        {/* Split Grid */}
-        <div className='grid sm:grid-cols-2 gap-x-10 gap-y-3 pt-5 border-t border-gray-200 text-base text-gray-700'>
-          <p>
-            <strong className='text-gray-900'>Powertrain:</strong>{' '}
-            {car.powertrain}
-          </p>
-          <p>
-            <strong className='text-gray-900'>Drivetrain:</strong>{' '}
-            {car.drivetrain}
-          </p>
-          <p>
-            <strong className='text-gray-900'>Base MSRP:</strong> {car.currency}{' '}
-            {car.msrp.toLocaleString()}
-          </p>
-          <p>
-            <strong className='text-gray-900'>Efficiency:</strong>{' '}
-            {car.efficiency?.city_mpg} city / {car.efficiency?.hwy_mpg} hwy MPG
-          </p>
-          <p className='sm:col-span-2'>
-            <strong className='text-gray-900'>Inventory:</strong>{' '}
-            {car.inventory?.location} • In stock: {car.inventory?.inStock} •
-            ETA: {car.inventory?.deliveryEtaDays} days
-          </p>
-        </div>
-
-        {/* Total */}
-        <div className='flex justify-between items-center border-t border-gray-200 pt-6 mt-4'>
-          <p className='text-xl font-semibold text-gray-700'>Total Price</p>
-          <p
-            className='text-3xl font-extrabold tracking-tight'
-            style={{ color: accentColor }}
-          >
-            {car.currency} {totalPrice.toLocaleString()}
-          </p>
+          {/* Right: Pricing breakdown */}
+          <div className='rounded-2xl border border-gray-200 bg-gray-50 p-8 shadow-sm'>
+            <div className='text-lg font-semibold text-gray-900 mb-5'>
+              Pricing Summary
+            </div>
+            <ul className='space-y-3 text-[15px]'>
+              <BreakdownRow
+                label='Base MSRP'
+                value={formatCurrency(car.currency, car.msrp)}
+              />
+              <BreakdownRow
+                label={`Color${
+                  selectedColor?.name ? ` • ${selectedColor.name}` : ''
+                }`}
+                value={
+                  colorExtra > 0
+                    ? `+ ${formatCurrency(car.currency, colorExtra)}`
+                    : formatCurrency(car.currency, 0)
+                }
+              />
+              <BreakdownRow
+                label={`Packages${
+                  selectedPackages.length
+                    ? ` • ${selectedPackages.map((p) => p.name).join(', ')}`
+                    : ''
+                }`}
+                value={formatCurrency(car.currency, packagesTotal)}
+              />
+              <div className='h-2' />
+              <BreakdownRow
+                label='Subtotal'
+                value={formatCurrency(car.currency, totalPrice)}
+                strong
+              />
+              <BreakdownRow
+                label={`Estimated Tax (${(getTaxRate(car) * 100).toFixed(1)}%)`}
+                value={formatCurrency(
+                  car.currency,
+                  Math.round(totalPrice * getTaxRate(car))
+                )}
+              />
+              <div className='border-t border-gray-200 my-3' />
+              <BreakdownRow
+                label='Estimated Total'
+                value={formatCurrency(
+                  car.currency,
+                  Math.round(totalPrice * (1 + getTaxRate(car)))
+                )}
+                xlarge
+                accent={accentColor}
+              />
+            </ul>
+            <div className='mt-4 text-xs text-gray-500'>
+              Taxes estimated based on region. Final pricing may vary by dealer.
+            </div>
+          </div>
         </div>
       </motion.div>
 
@@ -286,4 +312,46 @@ function getTimeOptions() {
     }
   }
   return out;
+}
+
+// --- pricing helpers & presenter ---
+function getTaxRate(car) {
+  // Basic heuristic by currency/region
+  const cur = String(car?.currency || '').toUpperCase();
+  const location = String(car?.inventory?.location || '').toLowerCase();
+  if (cur.includes('CAD') || location.includes('canada')) return 0.13; // HST approx
+  if (
+    cur.includes('EUR') ||
+    location.includes('germany') ||
+    location.includes('france') ||
+    location.includes('italy')
+  )
+    return 0.2; // EU VAT approx
+  return 0.0825; // default ~8.25% (typical US sales tax)
+}
+
+function formatCurrency(currency, amount) {
+  return `${currency} ${Number(amount || 0).toLocaleString()}`;
+}
+
+function BreakdownRow({ label, value, strong, xlarge, accent }) {
+  return (
+    <li className='flex items-center justify-between'>
+      <span className={`text-gray-700 ${strong ? 'font-semibold' : ''}`}>
+        {label}
+      </span>
+      <span
+        className={`text-right ${
+          xlarge
+            ? 'text-2xl font-extrabold'
+            : strong
+            ? 'font-semibold'
+            : 'text-gray-900'
+        }`}
+        style={accent ? { color: accent } : undefined}
+      >
+        {value}
+      </span>
+    </li>
+  );
 }

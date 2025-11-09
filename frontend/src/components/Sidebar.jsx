@@ -6,6 +6,7 @@ import {
   LogOut,
   CalendarDays,
   DollarSign,
+  Heart,
 } from 'lucide-react';
 
 export default function Sidebar({ onLogout }) {
@@ -84,7 +85,7 @@ export default function Sidebar({ onLogout }) {
             }`
           }
         >
-          <Car size={20} /> My Garage
+          <Heart size={20} /> My Garage
         </NavLink>
 
         <NavLink
