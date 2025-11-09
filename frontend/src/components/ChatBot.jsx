@@ -75,57 +75,79 @@ export default function ChatBot({ cars = [] }) {
         {open ? <X size={22} /> : <MessageSquare size={22} />}
       </button>
 
-      {/* Chat Panel */}
+      {/* Overlay + Chat Panel */}
       {open && (
-        <div className='fixed bottom-24 right-6 z-50 w-[380px] max-w-[92vw] bg-white rounded-xl border border-gray-200 shadow-lg shadow-gray-200/40 overflow-hidden'>
-          {/* Header */}
-          <div className='px-4 py-3 border-b border-gray-200 bg-white'>
-            <div className='font-semibold text-gray-900'>AI Assistant</div>
-            <div className='text-xs text-gray-500'>
-              Local, private, and fast
-            </div>
-          </div>
-
-          {/* Messages */}
+        <div className='fixed inset-0 z-40'>
+          {/* Backdrop */}
           <div
-            ref={scrollRef}
-            className='max-h-[60vh] overflow-y-auto p-3 bg-[#F9FAFB]'
+            className='absolute inset-0 bg-black/30 backdrop-blur-sm'
+            onClick={() => setOpen(false)}
+            aria-hidden='true'
+          />
+          {/* Panel */}
+          <div
+            className='absolute bottom-10 right-10 w-[720px] max-w-[96vw] bg-white rounded-2xl border border-gray-200 shadow-2xl shadow-gray-200/60 overflow-hidden transition-all duration-300'
+            role='dialog'
+            aria-label='AI Assistant'
           >
-            {messages.map((m, i) => renderMessage(m, i))}
-            {thinking && (
-              <ChatMessage role='assistant'>
-                <span className='inline-flex items-center gap-2'>
-                  <span className='w-2 h-2 rounded-full bg-[#EB0A1E] animate-pulse' />
-                  Bot is thinking…
-                </span>
-              </ChatMessage>
-            )}
-          </div>
-
-          {/* Input */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              sendMessage();
-            }}
-            className='p-3 bg-white border-t border-gray-200'
-          >
-            <div className='flex items-center gap-2'>
-              <input
-                type='text'
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder='Ask me e.g. "compare camry and corolla"'
-                className='flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EB0A1E]'
-              />
+            {/* Header */}
+            <div className='px-5 py-4 border-b border-gray-200 bg-white flex items-start justify-between'>
+              <div>
+                <div className='font-semibold text-gray-900'>AI Assistant</div>
+                <div className='text-xs text-gray-500'>
+                  Local, private, and fast
+                </div>
+              </div>
               <button
-                type='submit'
-                className='inline-flex items-center gap-1 px-3 py-2 bg-[#EB0A1E] text-white rounded-md hover:bg-red-600 transition'
+                onClick={() => setOpen(false)}
+                className='text-gray-500 hover:text-gray-700 transition'
+                aria-label='Close assistant'
               >
-                <Send size={16} /> Send
+                <X size={18} />
               </button>
             </div>
-          </form>
+
+            {/* Body: messages + input, uses fixed height for stable layout */}
+            <div className='flex flex-col h-[72vh] bg-[#F9FAFB]'>
+              {/* Messages */}
+              <div ref={scrollRef} className='flex-1 overflow-y-auto p-4'>
+                {messages.map((m, i) => renderMessage(m, i))}
+                {thinking && (
+                  <ChatMessage role='assistant'>
+                    <span className='inline-flex items-center gap-2'>
+                      <span className='w-2 h-2 rounded-full bg-[#EB0A1E] animate-pulse' />
+                      Bot is thinking…
+                    </span>
+                  </ChatMessage>
+                )}
+              </div>
+
+              {/* Input */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  sendMessage();
+                }}
+                className='p-4 bg-white border-t border-gray-200'
+              >
+                <div className='flex items-center gap-2'>
+                  <input
+                    type='text'
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder='Ask me e.g. "compare camry and corolla"'
+                    className='flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#EB0A1E]'
+                  />
+                  <button
+                    type='submit'
+                    className='inline-flex items-center gap-1 px-3 py-2 bg-[#EB0A1E] text-white rounded-md hover:bg-red-600 transition'
+                  >
+                    <Send size={16} /> Send
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       )}
     </>
