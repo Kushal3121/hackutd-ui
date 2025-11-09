@@ -1,5 +1,5 @@
 import Navbar from '../components/Navbar';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import {
@@ -21,8 +21,6 @@ import {
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
-  const hasAnimatedRef = useRef(false);
-  const [triggerAnimation, setTriggerAnimation] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -51,35 +49,31 @@ export default function Home() {
     visible: { opacity: 1, scale: 1 },
   };
 
-  // Counter animation
+  // Counter animation - starts when the element enters the viewport
   const Counter = ({ end, duration = 2000, suffix = '' }) => {
-    const [count, setCount] = useState(0);
-    const hasStarted = useRef(false);
+    const ref = useRef(null);
+    const inView = useInView(ref, { once: true, margin: '-100px' });
+    const [value, setValue] = useState(0);
 
     useEffect(() => {
-      if (!triggerAnimation || hasStarted.current) return;
-      hasStarted.current = true;
-
-      let startTime;
-      let animationFrame;
-      const animate = (timestamp) => {
-        if (!startTime) startTime = timestamp;
-        const progress = timestamp - startTime;
-        const percentage = Math.min(progress / duration, 1);
-        setCount(Math.floor(end * percentage));
-        if (percentage < 1) {
-          animationFrame = requestAnimationFrame(animate);
-        }
+      if (!inView) return;
+      let start;
+      let rafId;
+      const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+      const step = (ts) => {
+        if (!start) start = ts;
+        const progress = Math.min((ts - start) / duration, 1);
+        const eased = easeOutCubic(progress);
+        setValue(Math.round(end * eased));
+        if (progress < 1) rafId = requestAnimationFrame(step);
       };
-      animationFrame = requestAnimationFrame(animate);
-      return () => {
-        if (animationFrame) cancelAnimationFrame(animationFrame);
-      };
-    }, [triggerAnimation, end, duration]);
+      rafId = requestAnimationFrame(step);
+      return () => cancelAnimationFrame(rafId);
+    }, [inView, end, duration]);
 
     return (
-      <span>
-        {count}
+      <span ref={ref}>
+        {value}
         {suffix}
       </span>
     );
@@ -179,7 +173,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className='relative mt-16 w-full max-w-7xl mx-auto z-10'
+          className='relative mt-16 w-full z-10 px-4 md:px-8 lg:px-12 xl:px-16'
         >
           {/* Glow effects behind the car */}
           <div className='absolute inset-0 -z-10'>
@@ -192,7 +186,7 @@ export default function Home() {
               <motion.img
                 src='/images/grsupra.jpg'
                 alt='Toyota GR Supra'
-                className='w-full h-[500px] sm:h-[600px] lg:h-[650px] object-cover object-center'
+                className='w-full h-[520px] sm:h-[640px] md:h-[720px] lg:h-[780px] xl:h-[840px] object-cover object-center'
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.6 }}
               />
@@ -206,17 +200,17 @@ export default function Home() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.2, duration: 0.8 }}
-                className='absolute bottom-8 left-8 bg-white/95 backdrop-blur-md px-6 py-4 rounded-2xl shadow-2xl border border-white/40'
+                className='absolute bottom-4 left-4 sm:bottom-8 sm:left-8 bg-white/95 backdrop-blur-md px-4 py-3 sm:px-6 sm:py-4 rounded-2xl shadow-2xl border border-white/40'
               >
-                <div className='flex items-center gap-4'>
-                  <div className='bg-[#eb0a1e] p-3 rounded-xl'>
-                    <Car className='w-6 h-6 text-white' />
+                <div className='flex items-center gap-3 sm:gap-4'>
+                  <div className='bg-[#eb0a1e] p-2 sm:p-3 rounded-xl'>
+                    <Car className='w-5 h-5 sm:w-6 sm:h-6 text-white' />
                   </div>
                   <div className='text-left'>
-                    <p className='text-sm text-gray-500 font-medium'>
+                    <p className='text-xs sm:text-sm text-gray-500 font-medium'>
                       Featured Model
                     </p>
-                    <p className='text-lg font-bold text-black'>
+                    <p className='text-base sm:text-lg font-bold text-black'>
                       GR Supra 2024
                     </p>
                   </div>
@@ -228,10 +222,10 @@ export default function Home() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.4, duration: 0.8 }}
-                className='absolute top-8 right-8 bg-gradient-to-br from-[#eb0a1e] to-[#d1091b] px-6 py-3 rounded-full shadow-2xl'
+                className='absolute top-4 right-4 sm:top-8 sm:right-8 bg-gradient-to-br from-[#eb0a1e] to-[#d1091b] px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-2xl'
               >
-                <p className='text-white font-bold text-sm flex items-center gap-2'>
-                  <Zap className='w-4 h-4' />
+                <p className='text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2'>
+                  <Zap className='w-3.5 h-3.5 sm:w-4 sm:h-4' />
                   335 HP
                 </p>
               </motion.div>
@@ -242,19 +236,29 @@ export default function Home() {
 
             {/* Corner accents */}
             <motion.div
-              className='absolute -top-1 -left-1 w-24 h-24 border-t-[3px] border-l-[3px] border-[#eb0a1e] rounded-tl-[2rem]'
+              className='absolute -top-1 -left-1 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 border-t-[3px] border-l-[3px] border-[#eb0a1e] rounded-tl-[2rem]'
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 0.5 }}
             />
             <motion.div
-              className='absolute -bottom-1 -right-1 w-24 h-24 border-b-[3px] border-r-[3px] border-[#eb0a1e] rounded-br-[2rem]'
+              className='absolute -bottom-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 border-b-[3px] border-r-[3px] border-[#eb0a1e] rounded-br-[2rem]'
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 0.5 }}
             />
           </div>
         </motion.div>
+
+        <motion.div
+          className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20'
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 8, 0] }}
+          transition={{
+            opacity: { delay: 1.5, duration: 0.5 },
+            y: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+          }}
+        ></motion.div>
       </section>
 
       {/* Stats Section */}
@@ -263,12 +267,6 @@ export default function Home() {
         initial='hidden'
         whileInView='visible'
         viewport={{ once: true, margin: '-100px' }}
-        onViewportEnter={() => {
-          if (!hasAnimatedRef.current) {
-            hasAnimatedRef.current = true;
-            setTriggerAnimation(true);
-          }
-        }}
       >
         <div className='max-w-6xl mx-auto'>
           <motion.div
