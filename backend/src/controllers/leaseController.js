@@ -114,7 +114,8 @@ function daysBetween(start, end) {
 
 export const bookLease = async (req, res) => {
   try {
-    const { userId, leaseId, startDate, endDate, insurancePlan } = req.body ?? {};
+    const { userId, leaseId, startDate, endDate, insurancePlan } =
+      req.body ?? {};
     if (!userId || !leaseId || !startDate || !endDate) {
       return res
         .status(400)
@@ -179,5 +180,3 @@ export const deleteBooking = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete booking' });
   }
 };
-
-

@@ -13,6 +13,58 @@ export default function Compare() {
   const [cars, setCars] = useState([]);
   const [sortKey, setSortKey] = useState('price');
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [testDate, setTestDate] = useState(null);
+  const [testTime, setTestTime] = useState(null);
+  const selectStyles = {
+    control: (base) => ({
+      ...base,
+      borderRadius: '0.5rem',
+      borderColor: '#d1d5db',
+      boxShadow: 'none',
+    }),
+  };
+  const pad = (n) => String(n).padStart(2, '0');
+  const getDateOptions = (days = 30) => {
+    const out = [];
+    const today = new Date();
+    for (let i = 0; i < days; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const yyyy = d.getFullYear();
+      const mm = pad(d.getMonth() + 1);
+      const dd = pad(d.getDate());
+      out.push({
+        value: `${yyyy}-${mm}-${dd}`,
+        label: d.toLocaleDateString(undefined, {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+        }),
+      });
+    }
+    return out;
+  };
+  const getTimeOptions = () => {
+    const out = [];
+    const startHour = 9;
+    const endHour = 18;
+    for (let h = startHour; h <= endHour; h++) {
+      for (const m of [0, 30]) {
+        const a = new Date();
+        a.setHours(h, m, 0, 0);
+        out.push({
+          value: `${pad(h)}:${pad(m)}`,
+          label: a.toLocaleTimeString(undefined, {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        });
+      }
+    }
+    return out;
+  };
 
   useEffect(() => {
     (async () => {
@@ -249,30 +301,11 @@ export default function Compare() {
                   <td key={car.id} className='p-4 text-center'>
                     <div className='flex flex-col items-center gap-2'>
                       <button
-                        onClick={async () => {
-                          try {
-                            const user = JSON.parse(
-                              localStorage.getItem('user') || '{}'
-                            );
-                            const payload = {
-                              userId: user?.id || user?.username || 'guest',
-                              carId: car.id,
-                              carName: car.name,
-                              color: null,
-                              packages: [],
-                              totalPrice: car.msrp,
-                            };
-                            const res = await bookTestDrive(payload);
-                            if (res?.id) {
-                              toast.success(
-                                `Booked test drive for ${car.name}`
-                              );
-                            } else {
-                              toast.error(res?.error || 'Booking failed');
-                            }
-                          } catch {
-                            toast.error('Server not reachable');
-                          }
+                        onClick={() => {
+                          setSelectedCar(car);
+                          setTestDate(null);
+                          setTestTime(null);
+                          setShowModal(true);
                         }}
                         className='w-40 px-5 py-2 border border-red-400 bg-[#EB0A1E] text-white font-semibold rounded-md shadow-sm hover:bg-[#c10000] transition-all'
                       >
@@ -293,6 +326,96 @@ export default function Compare() {
             </tbody>
           </table>
         </motion.div>
+      )}
+      {showModal && selectedCar && (
+        <div className='fixed inset-0 z-50 bg-black/30 flex items-center justify-center'>
+          <div className='bg-white rounded-lg shadow-lg w-full max-w-md'>
+            <div className='p-4 border-b border-gray-200 flex items-center justify-between'>
+              <h4 className='text-lg font-semibold'>
+                Book Test Drive: {selectedCar.name}
+              </h4>
+              <button
+                onClick={() => setShowModal(false)}
+                className='text-gray-500 hover:text-gray-700'
+              >
+                ×
+              </button>
+            </div>
+            <div className='p-4 space-y-4'>
+              <div className='grid grid-cols-3 items-center gap-3'>
+                <label className='text-sm text-gray-600'>Date</label>
+                <div className='col-span-2'>
+                  <Select
+                    options={getDateOptions(30)}
+                    value={testDate}
+                    onChange={(opt) => setTestDate(opt)}
+                    isSearchable={false}
+                    styles={selectStyles}
+                    placeholder='Select date'
+                  />
+                </div>
+              </div>
+              <div className='grid grid-cols-3 items-center gap-3'>
+                <label className='text-sm text-gray-600'>Time</label>
+                <div className='col-span-2'>
+                  <Select
+                    options={getTimeOptions()}
+                    value={testTime}
+                    onChange={(opt) => setTestTime(opt)}
+                    isSearchable={false}
+                    styles={selectStyles}
+                    placeholder='Select time'
+                  />
+                </div>
+              </div>
+            </div>
+            <div className='p-4 border-t border-gray-200 flex items-center justify-end gap-2'>
+              <button
+                onClick={() => setShowModal(false)}
+                className='px-4 py-2 rounded-md border border-gray-300'
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  try {
+                    if (!testDate?.value || !testTime?.value) {
+                      toast.error('Please select date and time');
+                      return;
+                    }
+                    const user = JSON.parse(
+                      localStorage.getItem('user') || '{}'
+                    );
+                    const payload = {
+                      userId: user?.id || user?.username || 'guest',
+                      carId: selectedCar.id,
+                      carName: selectedCar.name,
+                      color: null,
+                      packages: [],
+                      totalPrice: selectedCar.msrp,
+                      date: testDate.value,
+                      time: testTime.value,
+                    };
+                    const res = await bookTestDrive(payload);
+                    if (res?.id) {
+                      toast.success(
+                        `Booked test drive for ${selectedCar.name}`
+                      );
+                      setShowModal(false);
+                    } else {
+                      toast.error(res?.error || 'Booking failed');
+                    }
+                  } catch {
+                    toast.error('Server not reachable');
+                  }
+                }}
+                className='px-4 py-2 rounded-md bg-[#EB0A1E] text-white font-semibold'
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

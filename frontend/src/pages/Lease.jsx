@@ -123,6 +123,23 @@ export default function Lease() {
     setModalOpen(true);
   };
 
+  const addDays = (isoDate, days) => {
+    const d = new Date(isoDate);
+    d.setDate(d.getDate() + days);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const diffDays = (a, b) => {
+    // difference in full days (end - start), end must be strictly after start to count a day
+    const start = new Date(a);
+    const end = new Date(b);
+    const ms = end.getTime() - start.getTime();
+    return Math.ceil(ms / (1000 * 60 * 60 * 24));
+  };
+
   const confirmLease = async () => {
     try {
       const uid = user?.id || user?.username;
@@ -132,6 +149,24 @@ export default function Lease() {
       }
       if (!selectedLease || !startDate || !endDate) {
         toast.error('Please fill all fields');
+        return;
+      }
+      // Client-side validation to avoid 400s
+      if (new Date(endDate).getTime() <= new Date(startDate).getTime()) {
+        toast.error('End date must be after start date');
+        return;
+      }
+      const days = diffDays(startDate, endDate);
+      const minDays = Number(selectedLease.minLeaseDays ?? 0);
+      const maxDays = Number(
+        selectedLease.maxLeaseDays ?? Number.MAX_SAFE_INTEGER
+      );
+      if (days < minDays) {
+        toast.error(`Minimum lease days is ${minDays}`);
+        return;
+      }
+      if (days > maxDays) {
+        toast.error(`Maximum lease days is ${maxDays}`);
         return;
       }
       const payload = {
@@ -444,7 +479,22 @@ export default function Lease() {
                 <input
                   type='date'
                   value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setStartDate(v);
+                    // Auto-suggest a valid end date based on minLeaseDays
+                    const min = Number(selectedLease?.minLeaseDays ?? 1);
+                    if (v) {
+                      const suggested = addDays(v, Math.max(min, 1));
+                      if (
+                        !endDate ||
+                        new Date(endDate) <= new Date(v) ||
+                        new Date(endDate) < new Date(suggested)
+                      ) {
+                        setEndDate(suggested);
+                      }
+                    }
+                  }}
                   className='w-full border border-gray-300 rounded-md px-3 py-2'
                 />
               </div>
@@ -455,6 +505,7 @@ export default function Lease() {
                 <input
                   type='date'
                   value={endDate}
+                  min={startDate ? addDays(startDate, 1) : undefined}
                   onChange={(e) => setEndDate(e.target.value)}
                   className='w-full border border-gray-300 rounded-md px-3 py-2'
                 />

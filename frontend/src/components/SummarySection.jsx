@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { bookTestDrive } from '../services/api';
+import Select from 'react-select';
 
 export default function SummarySection({
   car,
@@ -11,6 +12,9 @@ export default function SummarySection({
 }) {
   const [isBooking, setIsBooking] = useState(false);
   const [booked, setBooked] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [testDate, setTestDate] = useState(null);
+  const [testTime, setTestTime] = useState(null);
   const packagesTotal = selectedPackages.reduce(
     (sum, p) => sum + (p.price || 0),
     0
@@ -18,8 +22,12 @@ export default function SummarySection({
   const colorExtra = selectedColor?.extraCost || 0;
   const totalPrice = (car?.msrp || 0) + colorExtra + packagesTotal;
 
-  const handleBook = async () => {
+  const submitBooking = async () => {
     if (isBooking || booked) return;
+    if (!testDate?.value || !testTime?.value) {
+      toast.error('Please select date and time');
+      return;
+    }
     try {
       setIsBooking(true);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -30,11 +38,14 @@ export default function SummarySection({
         color: selectedColor?.name || null,
         packages: selectedPackages.map((p) => p.name),
         totalPrice,
+        date: testDate.value,
+        time: testTime.value,
       };
       const res = await bookTestDrive(payload);
       if (res?.id) {
         setBooked(true);
         toast.success('Test drive booked!');
+        setShowModal(false);
       } else {
         toast.error(res?.error || 'Booking failed');
       }
@@ -139,7 +150,7 @@ export default function SummarySection({
         className='mt-12 px-10 py-4 text-lg rounded-lg font-semibold text-white shadow-md transition-all disabled:opacity-60'
         style={{ backgroundColor: accentColor }}
         disabled={isBooking || booked}
-        onClick={handleBook}
+        onClick={() => setShowModal(true)}
       >
         {isBooking
           ? 'Booking…'
@@ -147,6 +158,120 @@ export default function SummarySection({
           ? 'Test Drive Booked'
           : 'Book a Test Drive'}
       </motion.button>
+
+      {showModal && (
+        <div className='fixed inset-0 z-50 bg-black/30 flex items-center justify-center'>
+          <div className='bg-white rounded-lg shadow-lg w-full max-w-md'>
+            <div className='p-4 border-b border-gray-200 flex items-center justify-between'>
+              <h4 className='text-lg font-semibold'>Select date & time</h4>
+              <button
+                onClick={() => setShowModal(false)}
+                className='text-gray-500 hover:text-gray-700'
+              >
+                ×
+              </button>
+            </div>
+            <div className='p-4 space-y-4'>
+              <div className='grid grid-cols-3 items-center gap-3'>
+                <label className='text-sm text-gray-600'>Date</label>
+                <div className='col-span-2'>
+                  <Select
+                    options={getDateOptions(30)}
+                    value={testDate}
+                    onChange={(opt) => setTestDate(opt)}
+                    isSearchable={false}
+                    styles={selectStyles}
+                    placeholder='Select date'
+                  />
+                </div>
+              </div>
+              <div className='grid grid-cols-3 items-center gap-3'>
+                <label className='text-sm text-gray-600'>Time</label>
+                <div className='col-span-2'>
+                  <Select
+                    options={getTimeOptions()}
+                    value={testTime}
+                    onChange={(opt) => setTestTime(opt)}
+                    isSearchable={false}
+                    styles={selectStyles}
+                    placeholder='Select time'
+                  />
+                </div>
+              </div>
+            </div>
+            <div className='p-4 border-t border-gray-200 flex items-center justify-end gap-2'>
+              <button
+                onClick={() => setShowModal(false)}
+                className='px-4 py-2 rounded-md border border-gray-300'
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitBooking}
+                className='px-4 py-2 rounded-md bg-[#EB0A1E] text-white font-semibold'
+                disabled={isBooking}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
+}
+
+// --- helpers for react-select date/time ---
+const selectStyles = {
+  control: (base) => ({
+    ...base,
+    borderRadius: '0.5rem',
+    borderColor: '#d1d5db',
+    boxShadow: 'none',
+  }),
+};
+
+function pad(n) {
+  return String(n).padStart(2, '0');
+}
+
+function getDateOptions(days = 30) {
+  const out = [];
+  const today = new Date();
+  for (let i = 0; i < days; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const yyyy = d.getFullYear();
+    const mm = pad(d.getMonth() + 1);
+    const dd = pad(d.getDate());
+    out.push({
+      value: `${yyyy}-${mm}-${dd}`,
+      label: d.toLocaleDateString(undefined, {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+      }),
+    });
+  }
+  return out;
+}
+
+function getTimeOptions() {
+  const out = [];
+  const startHour = 9;
+  const endHour = 18;
+  for (let h = startHour; h <= endHour; h++) {
+    for (const m of [0, 30]) {
+      const a = new Date();
+      a.setHours(h, m, 0, 0);
+      out.push({
+        value: `${pad(h)}:${pad(m)}`,
+        label: a.toLocaleTimeString(undefined, {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      });
+    }
+  }
+  return out;
 }

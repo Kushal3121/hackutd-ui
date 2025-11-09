@@ -1,11 +1,21 @@
 import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { getAllTestDrives, deleteTestDrive } from '../services/api';
+import {
+  getAllTestDrives,
+  deleteTestDrive,
+  updateTestDrive,
+} from '../services/api';
+import { Pencil, Trash2 } from 'lucide-react';
+import Select from 'react-select';
 
 export default function TestDrives() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showEdit, setShowEdit] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  const [editDate, setEditDate] = useState(null);
+  const [editTime, setEditTime] = useState(null);
   const user = useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem('user') || '{}');
@@ -23,6 +33,107 @@ export default function TestDrives() {
       toast.error('Failed to load test drives');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const selectStyles = {
+    control: (base) => ({
+      ...base,
+      borderRadius: '0.5rem',
+      borderColor: '#d1d5db',
+      boxShadow: 'none',
+    }),
+  };
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const getDateOptions = (days = 30) => {
+    const out = [];
+    const today = new Date();
+    for (let i = 0; i < days; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const yyyy = d.getFullYear();
+      const mm = pad(d.getMonth() + 1);
+      const dd = pad(d.getDate());
+      out.push({
+        value: `${yyyy}-${mm}-${dd}`,
+        label: d.toLocaleDateString(undefined, {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+        }),
+      });
+    }
+    return out;
+  };
+
+  const getTimeOptions = () => {
+    const out = [];
+    const startHour = 9;
+    const endHour = 18;
+    for (let h = startHour; h <= endHour; h++) {
+      for (const m of [0, 30]) {
+        const a = new Date();
+        a.setHours(h, m, 0, 0);
+        out.push({
+          value: `${pad(h)}:${pad(m)}`,
+          label: a.toLocaleTimeString(undefined, {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        });
+      }
+    }
+    return out;
+  };
+
+  const openEdit = (td) => {
+    setEditItem(td);
+    if (td.appointmentAt) {
+      const d = new Date(td.appointmentAt);
+      const yyyy = d.getFullYear();
+      const mm = pad(d.getMonth() + 1);
+      const dd = pad(d.getDate());
+      const hh = pad(d.getHours());
+      const mi = pad(d.getMinutes());
+      setEditDate({
+        value: `${yyyy}-${mm}-${dd}`,
+        label: d.toLocaleDateString(undefined, {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+        }),
+      });
+      setEditTime({
+        value: `${hh}:${mi}`,
+        label: d.toLocaleTimeString(undefined, {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      });
+    } else {
+      setEditDate(null);
+      setEditTime(null);
+    }
+    setShowEdit(true);
+  };
+
+  const submitEdit = async () => {
+    try {
+      if (!editItem) return;
+      if (!editDate?.value || !editTime?.value) {
+        toast.error('Please select date and time');
+        return;
+      }
+      await updateTestDrive(editItem.id, {
+        date: editDate.value,
+        time: editTime.value,
+      });
+      toast.success('Appointment updated');
+      setShowEdit(false);
+      fetchData();
+    } catch {
+      toast.error('Failed to update');
     }
   };
 
@@ -67,8 +178,8 @@ export default function TestDrives() {
                 <th className='p-4 font-semibold'>#</th>
                 <th className='p-4 font-semibold'>Car</th>
                 <th className='p-4 font-semibold'>Color</th>
-                <th className='p-4 font-semibold'>Packages</th>
                 <th className='p-4 font-semibold'>Total Price</th>
+                <th className='p-4 font-semibold'>Appointment</th>
                 <th className='p-4 font-semibold'>ETA (days)</th>
                 <th className='p-4 font-semibold'>Booked At</th>
                 <th className='p-4 font-semibold text-center'>Actions</th>
@@ -83,14 +194,14 @@ export default function TestDrives() {
                     {td.carName}
                   </td>
                   <td className='p-4 text-gray-700'>{td.color || '—'}</td>
-                  <td className='p-4 text-gray-700'>
-                    {Array.isArray(td.packages) && td.packages.length > 0
-                      ? td.packages.join(', ')
-                      : '—'}
-                  </td>
                   <td className='p-4 text-gray-800'>
                     {td.totalPrice
                       ? `USD ${td.totalPrice.toLocaleString()}`
+                      : '—'}
+                  </td>
+                  <td className='p-4 text-gray-700'>
+                    {td.appointmentAt
+                      ? new Date(td.appointmentAt).toLocaleString()
                       : '—'}
                   </td>
                   <td className='p-4 text-gray-700'>{td.etaDays}</td>
@@ -98,17 +209,85 @@ export default function TestDrives() {
                     {new Date(td.bookedAt).toLocaleString()}
                   </td>
                   <td className='p-4 text-center'>
-                    <button
-                      onClick={() => handleDelete(td.id)}
-                      className='px-4 py-1.5 border border-gray-300 rounded-md text-sm font-semibold hover:border-[#EB0A1E] hover:text-[#EB0A1E] transition'
-                    >
-                      Delete
-                    </button>
+                    <div className='flex items-center justify-center gap-3'>
+                      <button
+                        onClick={() => openEdit(td)}
+                        title='Edit appointment'
+                        className='p-2 rounded-md border border-gray-300 text-gray-700 hover:border-[#EB0A1E] hover:text-[#EB0A1E] transition'
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(td.id)}
+                        title='Delete'
+                        className='p-2 rounded-md border border-gray-300 text-gray-700 hover:border-[#EB0A1E] hover:text-[#EB0A1E] transition'
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {showEdit && (
+        <div className='fixed inset-0 z-50 bg-black/30 flex items-center justify-center'>
+          <div className='bg-white rounded-lg shadow-lg w-full max-w-md'>
+            <div className='p-4 border-b border-gray-200 flex items-center justify-between'>
+              <h4 className='text-lg font-semibold'>Edit appointment</h4>
+              <button
+                onClick={() => setShowEdit(false)}
+                className='text-gray-500 hover:text-gray-700'
+              >
+                ×
+              </button>
+            </div>
+            <div className='p-4 space-y-4'>
+              <div className='grid grid-cols-3 items-center gap-3'>
+                <label className='text-sm text-gray-600'>Date</label>
+                <div className='col-span-2'>
+                  <Select
+                    options={getDateOptions(30)}
+                    value={editDate}
+                    onChange={(opt) => setEditDate(opt)}
+                    isSearchable={false}
+                    styles={selectStyles}
+                    placeholder='Select date'
+                  />
+                </div>
+              </div>
+              <div className='grid grid-cols-3 items-center gap-3'>
+                <label className='text-sm text-gray-600'>Time</label>
+                <div className='col-span-2'>
+                  <Select
+                    options={getTimeOptions()}
+                    value={editTime}
+                    onChange={(opt) => setEditTime(opt)}
+                    isSearchable={false}
+                    styles={selectStyles}
+                    placeholder='Select time'
+                  />
+                </div>
+              </div>
+            </div>
+            <div className='p-4 border-t border-gray-200 flex items-center justify-end gap-2'>
+              <button
+                onClick={() => setShowEdit(false)}
+                className='px-4 py-2 rounded-md border border-gray-300'
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitEdit}
+                className='px-4 py-2 rounded-md bg-[#EB0A1E] text-white font-semibold'
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

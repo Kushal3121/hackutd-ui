@@ -84,6 +84,11 @@ export const deleteTestDrive = async (id) => {
   const { data } = await api.delete(API_ROUTES.TESTDRIVE_DELETE(id));
   return data;
 };
+
+export const updateTestDrive = async (id, payload) => {
+  const { data } = await api.put(API_ROUTES.TESTDRIVE_DELETE(id), payload);
+  return data;
+};
 // --- Configurator helper APIs (API-first with graceful fallbacks) ---
 export const getPackages = async (carId) => {
   const { data } = await api.get(`${API_ROUTES.CAR_DETAIL(carId)}/packages`);

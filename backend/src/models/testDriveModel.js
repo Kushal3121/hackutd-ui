@@ -67,4 +67,12 @@ export async function deleteTestDrive(id) {
   return true;
 }
 
-
+export async function updateTestDrive(id, updates) {
+  const idx = testDrives.findIndex((t) => t.id === id);
+  if (idx === -1) return null;
+  const current = testDrives[idx];
+  const next = { ...current, ...updates };
+  testDrives[idx] = next;
+  await saveTestDrives();
+  return next;
+}
