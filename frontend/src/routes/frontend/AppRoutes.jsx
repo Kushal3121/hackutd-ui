@@ -10,6 +10,7 @@ import Dashboard from '../../pages/Dashboard';
 import Compare from '../../pages/Compare';
 import TestDrives from '../../pages/TestDrives';
 import CarDetails from '../../pages/CarDetails';
+import Lease from '../../pages/Lease';
 
 const router = createBrowserRouter([
   { path: '/', element: <Home /> },
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: 'testdrives',
         element: <TestDrives />,
+      },
+      {
+        path: 'lease',
+        element: <Lease />,
       },
       {
         path: 'profile',

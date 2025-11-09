@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Car, BarChart3, User, LogOut, CalendarDays } from 'lucide-react';
+import { Car, BarChart3, User, LogOut, CalendarDays, DollarSign } from 'lucide-react';
 
 export default function Sidebar({ onLogout }) {
   const location = useLocation();
@@ -52,6 +52,19 @@ export default function Sidebar({ onLogout }) {
           }
         >
           <CalendarDays size={20} /> Test Drives
+        </NavLink>
+
+        <NavLink
+          to='/dashboard/lease'
+          className={({ isActive }) =>
+            `flex items-center gap-3 p-2 rounded-lg transition font-medium ${
+              isActive
+                ? 'bg-toyotaRed text-white'
+                : 'hover:bg-toyotaRed-light hover:text-white'
+            }`
+          }
+        >
+          <DollarSign size={20} /> Lease Cars
         </NavLink>
 
         <NavLink

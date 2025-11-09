@@ -3,8 +3,10 @@ import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import carRoutes from './routes/carRoutes.js';
 import testDriveRoutes from './routes/testDriveRoutes.js';
+import leaseRoutes from './routes/leaseRoutes.js';
 import { initUsers } from './models/userModel.js';
 import { initTestDrives } from './models/testDriveModel.js';
+import { initLeases } from './controllers/leaseController.js';
 
 const app = express();
 
@@ -20,6 +22,7 @@ app.use(express.json());
 app.use('/', authRoutes);
 app.use('/api/cars', carRoutes);
 app.use('/api/testdrive', testDriveRoutes);
+app.use('/api/lease', leaseRoutes);
 
 app.use((req, res) => res.status(404).json({ error: 'route not found' }));
 
@@ -28,6 +31,7 @@ const PORT = process.env.PORT || 3000;
 const start = async () => {
   await initUsers();
   await initTestDrives();
+  await initLeases();
   app.listen(PORT, () =>
     console.log(`API running at http://localhost:${PORT}`)
   );

@@ -81,7 +81,7 @@ export default function CarCard({ car }) {
         '
       >
         <p className='text-white font-medium text-sm mb-3 drop-shadow'>
-          {car.packages.length} Optional Packages
+          {car.packages?.length ?? 0} Optional Packages
         </p>
         <button
           onClick={() => navigate(`/dashboard/cars/${car.id}`)}

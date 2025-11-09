@@ -11,19 +11,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // -------------------------
-// 1️⃣ Base Lease-Eligible Models
+// 1️⃣ Base Lease-Eligible Models (consistent with car dataset)
 // -------------------------
 const leaseEligibleModels = [
-  { id: 'CAR-1', name: 'Toyota Corolla', type: 'Sedan' },
-  { id: 'CAR-2', name: 'Toyota Camry', type: 'Sedan' },
-  { id: 'CAR-3', name: 'Toyota RAV4', type: 'SUV' },
-  { id: 'CAR-4', name: 'Toyota Highlander', type: 'SUV' },
-  { id: 'CAR-5', name: 'Toyota Tacoma', type: 'Truck' },
-  { id: 'CAR-6', name: 'Toyota Prius', type: 'Hybrid' },
-  { id: 'CAR-7', name: 'Toyota GR Corolla', type: 'Performance' },
-  { id: 'CAR-8', name: 'Toyota Crown', type: 'Sedan' },
-  { id: 'CAR-9', name: 'Toyota Land Cruiser', type: 'SUV' },
-  { id: 'CAR-10', name: 'Toyota Tundra', type: 'Truck' },
+  { modelCode: 'COROLLA', name: 'Toyota Corolla', type: 'Sedan' },
+  { modelCode: 'CAMRY', name: 'Toyota Camry', type: 'Sedan' },
+  { modelCode: 'RAV4', name: 'Toyota RAV4', type: 'SUV' },
+  { modelCode: 'HIGHLANDER', name: 'Toyota Highlander', type: 'SUV' },
+  { modelCode: 'TACOMA', name: 'Toyota Tacoma', type: 'Truck' },
+  { modelCode: 'PRIUS', name: 'Toyota Prius', type: 'Hybrid' },
+  { modelCode: 'GRCOROLLA', name: 'Toyota GR Corolla', type: 'Performance' },
+  { modelCode: 'CROWN', name: 'Toyota Crown', type: 'Sedan' },
+  { modelCode: 'LANDCRUISER', name: 'Toyota Land Cruiser', type: 'SUV' },
+  { modelCode: 'TUNDRA', name: 'Toyota Tundra', type: 'Truck' },
 ];
 
 // -------------------------
@@ -48,16 +48,12 @@ const insurancePlans = [
 // -------------------------
 const leaseInventory = [];
 let leaseId = 1;
-
-// total target entries
 const targetCount = 100;
 const entriesPerModel = Math.floor(targetCount / leaseEligibleModels.length);
 
 for (const model of leaseEligibleModels) {
-  const regionSubset = [...regions]; // rotate regions per model
-
   for (let i = 0; i < entriesPerModel; i++) {
-    const region = regionSubset[i % regionSubset.length];
+    const region = regions[i % regions.length];
     const leaseType = leaseTypes[Math.floor(Math.random() * leaseTypes.length)];
 
     const baseRate =
@@ -75,7 +71,6 @@ for (const model of leaseEligibleModels) {
     const monthlyRate = Math.round(dailyRate * 28 * 0.85);
     const selectedInsurance =
       insurancePlans[Math.floor(Math.random() * insurancePlans.length)];
-
     const location =
       locations[region][Math.floor(Math.random() * locations[region].length)];
 
@@ -84,7 +79,7 @@ for (const model of leaseEligibleModels) {
 
     const leaseCar = {
       id: `LEASE-${leaseId++}`,
-      carId: model.id,
+      modelCode: model.modelCode,
       carName: model.name,
       region,
       leaseType,
@@ -99,10 +94,24 @@ for (const model of leaseEligibleModels) {
       location,
       availabilityStatus: Math.random() > 0.1 ? 'available' : 'unavailable',
       bookedDates: [],
+      media: {
+        hero: `/images/${model.modelCode.toLowerCase()}.jpg`,
+      },
     };
 
     leaseInventory.push(leaseCar);
   }
+}
+
+// -------------------------
+// 🔀 Shuffle Lease Inventory
+// -------------------------
+for (let i = leaseInventory.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [leaseInventory[i], leaseInventory[j]] = [
+    leaseInventory[j],
+    leaseInventory[i],
+  ];
 }
 
 // -------------------------
@@ -118,5 +127,5 @@ fs.writeFileSync(
 );
 
 console.log(
-  `Generated ${leaseInventory.length} lease-available cars across regions.`
+  `Generated ${leaseInventory.length} lease-available cars (shuffled).`
 );

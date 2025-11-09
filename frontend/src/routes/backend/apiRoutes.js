@@ -18,4 +18,10 @@ export const API_ROUTES = {
   TESTDRIVE: `${BASE_URL}/api/testdrive`,
   TESTDRIVE_USER: (userId) => `${BASE_URL}/api/testdrive/${userId}`,
   TESTDRIVE_DELETE: (id) => `${BASE_URL}/api/testdrive/${id}`,
+  // --- Lease routes ---
+  LEASE: `${BASE_URL}/api/lease`,
+  LEASE_DETAIL: (id) => `${BASE_URL}/api/lease/${id}`,
+  LEASE_BOOK: `${BASE_URL}/api/lease/book`,
+  LEASE_BOOKINGS: `${BASE_URL}/api/lease/bookings`,
+  LEASE_BOOKING_DELETE: (id) => `${BASE_URL}/api/lease/bookings/${id}`,
 };

@@ -124,4 +124,27 @@ export const getSummary = async (carId) => {
   return data;
 };
 
+// --- Lease APIs ---
+export const getLeaseCars = async (params = {}) => {
+  const { data } = await api.get(API_ROUTES.LEASE, { params });
+  return data;
+};
+
+export const createLease = async (payload) => {
+  const { data } = await api.post(API_ROUTES.LEASE_BOOK, payload);
+  return data;
+};
+
+export const getMyLeases = async (userId) => {
+  const { data } = await api.get(API_ROUTES.LEASE_BOOKINGS, {
+    params: { userId },
+  });
+  return data;
+};
+
+export const deleteLeaseBooking = async (id) => {
+  const { data } = await api.delete(API_ROUTES.LEASE_BOOKING_DELETE(id));
+  return data;
+};
+
 export default api;

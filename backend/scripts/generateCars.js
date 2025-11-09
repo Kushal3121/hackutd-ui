@@ -185,19 +185,10 @@ const baseModels = [
     powertrains: ['Gas', 'Hybrid'],
     drivetrains: ['FWD', 'AWD'],
   },
-  {
-    modelCode: '4RUNNER',
-    name: 'Toyota 4Runner',
-    series: 'SUV',
-    baseMsrp: 40755,
-    trims: ['SR5', 'TRD Sport', 'Limited', 'TRD Pro'],
-    powertrains: ['Gas'],
-    drivetrains: ['RWD', '4x4'],
-  },
 ];
 
 // -------------------------
-// 2️⃣ Supporting Data
+// Supporting Data
 // -------------------------
 const colors = [
   { name: 'Wind Chill Pearl', code: '089', extraCost: 425 },
@@ -238,7 +229,7 @@ const regions = {
 };
 
 // -------------------------
-// 3️⃣ Generate Cars
+// Generate Cars
 // -------------------------
 const cars = [];
 let id = 1;
@@ -247,17 +238,12 @@ for (const model of baseModels) {
   for (const region in regions) {
     const { currency, multiplier } = regions[region];
 
-    // Randomly limit variants per model (~200 total each)
-    for (let i = 0; i < model.trims.length; i++) {
-      for (let j = 0; j < model.powertrains.length; j++) {
-        for (let k = 0; k < model.drivetrains.length; k++) {
-          if (Math.random() > 0.5) continue; // skip some combos for diversity
+    for (const trim of model.trims) {
+      for (const powertrain of model.powertrains) {
+        for (const drivetrain of model.drivetrains) {
+          if (Math.random() > 0.5) continue;
 
-          const trim = model.trims[i];
-          const powertrain = model.powertrains[j];
-          const drivetrain = model.drivetrains[k];
           const year = 2024 + Math.floor(Math.random() * 2);
-
           const basePrice =
             model.baseMsrp +
             (trim.toLowerCase().includes('limited') ? 5000 : 0) +
@@ -277,6 +263,11 @@ for (const model of baseModels) {
             basePrice * (0.95 + Math.random() * 0.1) * multiplier
           );
 
+          // 🎯 Randomize package selection (1–2 per car)
+          const randomPackages = [...packages]
+            .sort(() => Math.random() - 0.5)
+            .slice(0, Math.floor(Math.random() * 2) + 1);
+
           const car = {
             id: `CAR-${id++}`,
             name: model.name,
@@ -289,12 +280,9 @@ for (const model of baseModels) {
             powertrain,
             drivetrain,
             msrp,
-            priceRange: {
-              min: msrp,
-              max: Math.round(msrp * 1.1),
-            },
+            priceRange: { min: msrp, max: Math.round(msrp * 1.1) },
             colors,
-            packages,
+            packages: randomPackages,
             efficiency:
               powertrain === 'Electric'
                 ? {
@@ -346,7 +334,15 @@ for (const model of baseModels) {
 }
 
 // -------------------------
-// 4️⃣ Save JSON File
+// Shuffle order for randomness
+// -------------------------
+for (let i = cars.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [cars[i], cars[j]] = [cars[j], cars[i]];
+}
+
+// -------------------------
+// Save JSON File
 // -------------------------
 const outDir = path.join(__dirname, '../data');
 if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
@@ -357,4 +353,6 @@ fs.writeFileSync(
   'utf-8'
 );
 
-console.log(`Generated ${cars.length} Toyota variants across regions.`);
+console.log(
+  `Generated ${cars.length} Toyota variants (shuffled with random packages).`
+);
