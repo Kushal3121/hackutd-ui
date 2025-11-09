@@ -25,7 +25,7 @@ export default function DashboardLayout() {
       <Toaster />
       <Sidebar onLogout={handleLogout} />
       <div className='flex-1 flex flex-col'>
-        <Topbar user={user} />
+        <Topbar user={user} onLogout={handleLogout} />
         <main className='flex-1 overflow-y-auto p-6 bg-toyotaGray-light'>
           <Outlet />
         </main>

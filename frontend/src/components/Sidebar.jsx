@@ -2,7 +2,6 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {
   Car,
   BarChart3,
-  User,
   LogOut,
   CalendarDays,
   DollarSign,
@@ -86,19 +85,6 @@ export default function Sidebar({ onLogout }) {
           }
         >
           <Heart size={20} /> My Garage
-        </NavLink>
-
-        <NavLink
-          to='/dashboard/profile'
-          className={({ isActive }) =>
-            `flex items-center gap-3 p-2 rounded-lg transition font-medium ${
-              isActive
-                ? 'bg-toyotaRed text-white'
-                : 'hover:bg-toyotaRed-light hover:text-white'
-            }`
-          }
-        >
-          <User size={20} /> Profile
         </NavLink>
       </nav>
 
