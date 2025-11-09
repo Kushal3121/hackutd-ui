@@ -96,7 +96,7 @@ export default function CarSelect({ cars, selectedCars, onSelect, onRemove }) {
             />
           )}
           {index > 0 && (
-            <span className='inline-flex items-center justify-center bg-[#EB0A1E] text-white text-xs font-semibold rounded-full w-5 h-5'>
+            <span className='inline-flex items-center justify-center bg-[#EB0A1E] text-white text-xs font-semibold rounded-full w-5 h-5 shrink-0'>
               {index}
             </span>
           )}
