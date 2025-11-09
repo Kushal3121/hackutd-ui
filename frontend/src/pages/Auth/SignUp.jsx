@@ -24,9 +24,13 @@ export default function Signup() {
     try {
       const res = await signupUser(form);
       if (res.user) {
+        localStorage.setItem('user', JSON.stringify(res.user));
+
         toast.success('Account created successfully!');
         setTimeout(() => navigate('/dashboard'), 200);
-      } else toast.error(res.error || 'Signup failed');
+      } else {
+        toast.error(res.error || 'Signup failed');
+      }
     } catch {
       toast.error('Server not reachable');
     } finally {
