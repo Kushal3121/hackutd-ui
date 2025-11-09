@@ -14,8 +14,7 @@ export default function About() {
       >
         {/* Title */}
         <h1 className='text-4xl sm:text-5xl font-extrabold mb-6 text-toyotaGray-dark'>
-          About{' '}
-          <span className='text-toyotaRed'>Kynetic Mobility Challenge</span>
+          About <span className='text-toyotaRed'>Kynetic</span>
         </h1>
 
         {/* Description */}
